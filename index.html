@@ -1116,18 +1116,22 @@
     }
 
 
-    function restartDropEffectAnimations(layer) {
-      const animated = layer.querySelectorAll("*");
-      animated.forEach(el => {
-        el.style.animation = "none";
-      });
 
-      // 強制再描画。スマホで偶数回だけアニメが飛ぶ問題の対策。
-      void layer.offsetWidth;
-
-      animated.forEach(el => {
-        el.style.animation = "";
-      });
+    function buildDropEffectHtml() {
+      return `
+        <div id="effectChest" class="effect-chest blue">
+          <div class="effect-aura"></div>
+          <div id="effectBeam" class="effect-beam"></div>
+          <div class="effect-inner-light"></div>
+          <div id="effectItem" class="effect-item white"></div>
+          <div id="effectChestLid" class="effect-chest-lid"></div>
+          <div id="effectChestBox" class="effect-chest-box"></div>
+          <div class="effect-lock"></div>
+          <div class="effect-sparkles">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+      `;
     }
 
 
@@ -1135,10 +1139,7 @@
       if (!chestEffectEnabled) return;
 
       const layer = document.getElementById("dropEffectLayer");
-      const chest = document.getElementById("effectChest");
-      const item = document.getElementById("effectItem");
-      const beam = document.getElementById("effectBeam");
-      if (!layer || !chest || !item || !beam) return;
+      if (!layer) return;
 
       const chestColor = effectChestColorByElapsed(secondsSinceStageDrop || 0);
       const itemColor = rollEffectItemColor(chestColor);
@@ -1146,8 +1147,15 @@
 
       clearTimeout(chestEffectTimer);
 
+      // スマホ対策：前回の演出DOMを破棄して、毎回新品を作る
       layer.classList.remove("show");
       layer.style.display = "none";
+      layer.innerHTML = buildDropEffectHtml();
+
+      const chest = document.getElementById("effectChest");
+      const item = document.getElementById("effectItem");
+      const beam = document.getElementById("effectBeam");
+      if (!chest || !item || !beam) return;
 
       chest.className = `effect-chest ${chestColor}`;
       item.className = `effect-item ${itemColor}`;
@@ -1155,21 +1163,22 @@
       beam.style.setProperty("--item-color", itemCssColor);
       applyEffectChestColor(chestColor);
 
-      restartDropEffectAnimations(layer);
-
       if (chestColor === "rainbow" || itemColor === "rainbow") {
         triggerEffectFlash();
       }
 
-      // display:none のままだとスマホで再描画が遅れることがあるため、先にblockへ戻す
-      layer.style.display = "block";
-      void layer.offsetWidth;
-      layer.classList.add("show");
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          layer.style.display = "block";
+          layer.classList.add("show");
+        });
+      });
 
       chestEffectTimer = setTimeout(() => {
         layer.classList.remove("show");
         layer.style.display = "none";
-      }, 3000);
+        layer.innerHTML = "";
+      }, 3100);
     }
 
 
