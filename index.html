@@ -1115,6 +1115,22 @@
       box.style.backgroundSize = chestColor === "rainbow" ? "320% 320%" : "";
     }
 
+
+    function restartDropEffectAnimations(layer) {
+      const animated = layer.querySelectorAll("*");
+      animated.forEach(el => {
+        el.style.animation = "none";
+      });
+
+      // 強制再描画。スマホで偶数回だけアニメが飛ぶ問題の対策。
+      void layer.offsetWidth;
+
+      animated.forEach(el => {
+        el.style.animation = "";
+      });
+    }
+
+
     function playDropEffect(secondsSinceStageDrop) {
       if (!chestEffectEnabled) return;
 
@@ -1131,21 +1147,28 @@
       clearTimeout(chestEffectTimer);
 
       layer.classList.remove("show");
+      layer.style.display = "none";
+
       chest.className = `effect-chest ${chestColor}`;
       item.className = `effect-item ${itemColor}`;
       chest.style.setProperty("--item-color", itemCssColor);
       beam.style.setProperty("--item-color", itemCssColor);
       applyEffectChestColor(chestColor);
 
+      restartDropEffectAnimations(layer);
+
       if (chestColor === "rainbow" || itemColor === "rainbow") {
         triggerEffectFlash();
       }
 
+      // display:none のままだとスマホで再描画が遅れることがあるため、先にblockへ戻す
+      layer.style.display = "block";
       void layer.offsetWidth;
       layer.classList.add("show");
 
       chestEffectTimer = setTimeout(() => {
         layer.classList.remove("show");
+        layer.style.display = "none";
       }, 3000);
     }
 
