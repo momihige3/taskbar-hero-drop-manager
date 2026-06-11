@@ -197,15 +197,61 @@
       font-weight: 700;
     }
 
+    .top-status {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px 18px 0;
+    }
+
     .global-last-drop {
       color: var(--accent);
       font-size: 20px;
       font-weight: 900;
-      margin-bottom: 12px;
-      padding: 10px;
-      border-radius: 12px;
-      background: var(--panel2);
+      padding: 12px;
+      border-radius: 14px;
+      background: var(--panel);
       border: 1px solid var(--line);
+      box-shadow: 0 8px 24px rgba(0,0,0,.2);
+    }
+
+    .stage.normal {
+      border-color: rgba(255,255,255,.45);
+    }
+
+    .stage.nightmare {
+      border-color: rgba(170, 95, 255, .75);
+    }
+
+    .stage.hell {
+      border-color: rgba(255, 92, 122, .75);
+    }
+
+    .stage.torment {
+      border-color: rgba(255, 156, 64, .8);
+    }
+
+    .stage.normal .difficulty { color: #ffffff; }
+    .stage.nightmare .difficulty { color: #bb8cff; }
+    .stage.hell .difficulty { color: #ff5c7a; }
+    .stage.torment .difficulty { color: #ff9c40; }
+
+
+
+
+
+
+
+
+
+
+    .disclaimer {
+      max-width: 1200px;
+      margin: 18px auto 0;
+      padding: 0 18px 20px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      text-align: center;
     }
 
     .stage-actions {
@@ -320,6 +366,408 @@
       padding: 18px;
       font-size: 12px;
     }
+  
+    /* 宝箱演出 */
+    .chest-effect-toggle {
+      width: 100%;
+      min-height: 48px;
+      background: #263248;
+      font-size: 16px;
+    }
+
+    .screen-flash {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 9999;
+      background: rgba(255,255,255,.92);
+    }
+
+    .screen-flash.flash {
+      animation: screenFlash .45s ease forwards;
+    }
+
+    .drop-effect-layer {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      width: min(92vw, 320px);
+      height: 250px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      display: none;
+      z-index: 8000;
+    }
+
+    .drop-effect-layer.show {
+      display: block;
+      animation: effectLayerFade 3s ease forwards;
+    }
+
+    .effect-chest {
+      --chest-main: #2f6fb8;
+      --glow: rgba(47,111,184,.62);
+      position: absolute;
+      left: 50%;
+      bottom: 24px;
+      width: 150px;
+      height: 102px;
+      transform: translateX(-50%) scale(.2);
+      filter: drop-shadow(0 18px 30px rgba(0,0,0,.55));
+      animation: effectChestMotion 3s ease forwards;
+      z-index: 4;
+    }
+
+    .effect-chest-lid {
+      position: absolute;
+      width: 150px;
+      height: 40px;
+      left: 0;
+      top: 7px;
+      background: var(--chest-main);
+      border: 5px solid rgba(255,255,255,.24);
+      border-bottom: 6px solid rgba(0,0,0,.35);
+      border-radius: 17px 17px 6px 6px;
+      transform-origin: center bottom;
+      animation: effectLidOpen 3s ease forwards;
+      z-index: 7;
+      overflow: hidden;
+    }
+
+    .effect-chest-lid::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 16px;
+      width: 100%;
+      height: 4px;
+      background: rgba(255,230,130,.85);
+    }
+
+    .effect-chest-box {
+      position: absolute;
+      width: 150px;
+      height: 60px;
+      left: 0;
+      bottom: 0;
+      background: var(--chest-main);
+      border: 5px solid rgba(255,255,255,.24);
+      border-top: 7px solid rgba(0,0,0,.35);
+      border-radius: 7px 7px 17px 17px;
+      z-index: 5;
+      overflow: hidden;
+    }
+
+    .effect-chest-box::after {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border-radius: 14px;
+      border: 2px solid rgba(255,255,255,.18);
+    }
+
+    .effect-lock {
+      position: absolute;
+      left: 50%;
+      bottom: 23px;
+      width: 30px;
+      height: 24px;
+      transform: translateX(-50%);
+      border-radius: 9px;
+      background: #ffe678;
+      border: 4px solid rgba(0,0,0,.35);
+      z-index: 9;
+    }
+
+    .effect-inner-light {
+      position: absolute;
+      left: 50%;
+      bottom: 54px;
+      width: 120px;
+      height: 58px;
+      transform: translateX(-50%) scale(.25);
+      background: radial-gradient(circle, rgba(255,255,210,.95), transparent 68%);
+      border-radius: 50%;
+      opacity: 0;
+      z-index: 3;
+      animation: effectInnerLight 3s ease forwards;
+    }
+
+    .effect-aura {
+      position: absolute;
+      left: 50%;
+      bottom: 48px;
+      width: 210px;
+      height: 150px;
+      transform: translateX(-50%) scale(.3);
+      border-radius: 50%;
+      opacity: 0;
+      background: radial-gradient(circle, var(--glow), transparent 66%);
+      animation: effectAuraBurst 3s ease forwards;
+      z-index: 1;
+    }
+
+    .effect-item {
+      --item-color: #ffffff;
+      --item-outline: #000000;
+      position: absolute;
+      left: 50%;
+      bottom: 72px;
+      width: 36px;
+      height: 36px;
+      transform: translateX(-50%) translateY(80px) scale(.25) rotate(45deg);
+      background: var(--item-color);
+      clip-path: polygon(50% 0%, 92% 28%, 72% 100%, 28% 100%, 8% 28%);
+      opacity: 0;
+      z-index: 8;
+      box-shadow: 0 0 24px var(--item-color), 0 0 56px var(--item-color);
+      filter:
+        drop-shadow(0 0 2px var(--item-outline))
+        drop-shadow(0 0 2px var(--item-outline))
+        drop-shadow(0 0 2px var(--item-outline))
+        drop-shadow(0 0 10px var(--item-color));
+      animation: effectItemFly 3s ease forwards;
+    }
+
+    .effect-item::after {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      background: rgba(255,255,255,.24);
+      clip-path: inherit;
+      pointer-events: none;
+    }
+
+    .effect-item.white { --item-color: #b0b0b0; --item-outline:#1d1d1d; }
+    .effect-item.yellow { --item-color: #ffd84d; --item-outline:#000000; }
+    .effect-item.red { --item-color: #ff3b4f; --item-outline:#ffffff; }
+    .effect-item.purple { --item-color: #a45cff; --item-outline:#fff3a0; }
+
+    .effect-item.rainbow {
+      --item-outline: transparent;
+      clip-path: polygon(50% 0%, 61% 34%, 98% 34%, 68% 55%, 79% 91%, 50% 70%, 21% 91%, 32% 55%, 2% 34%, 39% 34%);
+      background: linear-gradient(90deg, #ff3b4f, #ffb13b, #fff23b, #38d47a, #2f8cff, #a45cff, #ff3b4f);
+      background-size: 260% 260%;
+      filter:
+        drop-shadow(0 0 10px #ffffff)
+        drop-shadow(0 0 22px #ffeb3b)
+        drop-shadow(0 0 34px #2f8cff);
+      animation: effectRainbowMove .75s linear infinite, effectItemFlyRainbow 3s ease forwards;
+    }
+
+    .effect-item.boots {
+      width: 78px;
+      height: 48px;
+      clip-path: none;
+      background: transparent;
+      box-shadow: none;
+      filter: none;
+      animation: effectItemFlyNoRotate 3s ease forwards;
+    }
+
+    .effect-item.boots::before,
+    .effect-item.boots::after {
+      content: "";
+      position: absolute;
+      top: 4px;
+      width: 30px;
+      height: 38px;
+      border: 3px solid #20242d;
+      border-radius: 10px 10px 5px 5px;
+      background: linear-gradient(180deg, #ffffff 0%, #cfd7df 42%, #7e8792 100%);
+      clip-path: polygon(17% 0%, 78% 0%, 78% 58%, 100% 58%, 100% 100%, 6% 100%, 6% 62%, 17% 62%);
+      box-shadow:
+        0 0 0 2px #eef3f8 inset,
+        0 0 12px #f4f8ff;
+    }
+
+    .effect-item.boots::before {
+      left: 10px;
+      transform: rotate(-7deg);
+      z-index: 3;
+    }
+
+    .effect-item.boots::after {
+      left: 34px;
+      transform: rotate(5deg);
+      z-index: 2;
+      opacity: .95;
+    }
+
+    .effect-item.crystal {
+      width: 48px;
+      height: 48px;
+      --item-color: #9ff8ff;
+      --item-outline: #15192b;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 32% 25%, #ffffff 0%, #eaffff 16%, transparent 18%),
+        radial-gradient(circle at 42% 36%, #bffcff 0%, #4de1f2 45%, #0c8eaa 100%);
+      clip-path: none;
+      animation: effectItemFlyNoRotate 3s ease forwards;
+      box-shadow:
+        0 0 0 4px #15192b,
+        0 0 18px #9ff8ff,
+        0 0 42px #45dfff;
+    }
+
+    .effect-item.crystal::after {
+      content: "";
+      position: absolute;
+      inset: 8px 11px 18px 11px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.65);
+      clip-path: none;
+      filter: blur(.5px);
+    }
+
+    .effect-beam {
+      position: absolute;
+      left: 50%;
+      bottom: 62px;
+      width: 12px;
+      height: 145px;
+      transform: translateX(-50%) scaleY(.2);
+      transform-origin: bottom;
+      background: linear-gradient(to top, var(--item-color), transparent);
+      opacity: 0;
+      filter: blur(1px);
+      z-index: 2;
+      animation: effectBeamRise 3s ease forwards;
+    }
+
+    .effect-sparkles {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      opacity: 0;
+      animation: effectSparkleShow 3s ease forwards;
+    }
+
+    .effect-sparkles span {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--item-color);
+      box-shadow:
+        0 0 8px var(--item-color),
+        0 0 18px var(--item-color),
+        0 0 30px rgba(255,255,255,.55);
+      animation: effectSparkleMove 1s ease-in-out infinite;
+    }
+
+    .effect-sparkles span::before,
+    .effect-sparkles span::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--item-color);
+      border-radius: 99px;
+    }
+
+    .effect-sparkles span::before { width: 22px; height: 3px; }
+    .effect-sparkles span::after { width: 3px; height: 22px; }
+
+    .effect-sparkles span:nth-child(1){ left: 30%; top: 24%; animation-delay: 0s; }
+    .effect-sparkles span:nth-child(2){ right: 28%; top: 18%; animation-delay: .12s; }
+    .effect-sparkles span:nth-child(3){ left: 38%; bottom: 28%; animation-delay: .24s; }
+    .effect-sparkles span:nth-child(4){ right: 36%; bottom: 34%; animation-delay: .36s; }
+    .effect-sparkles span:nth-child(5){ left: 48%; top: 6%; animation-delay: .48s; }
+    .effect-sparkles span:nth-child(6){ right: 44%; bottom: 16%; animation-delay: .60s; }
+
+    @keyframes effectChestMotion {
+      0% { transform: translateX(-50%) scale(.2); opacity: 0; }
+      12% { transform: translateX(-50%) scale(.84); opacity: 1; }
+      22% { transform: translateX(-50%) scale(.78) translateY(0); }
+      34% { transform: translateX(-50%) scale(.8) translateY(-16px) rotate(-3deg); }
+      42% { transform: translateX(-50%) scale(.8) translateY(0) rotate(3deg); }
+      50% { transform: translateX(-50%) scale(.8) translateY(-7px) rotate(-1deg); }
+      58% { transform: translateX(-50%) scale(.8) translateY(0) rotate(0); }
+      88% { transform: translateX(-50%) scale(.8); opacity: 1; }
+      100% { transform: translateX(-50%) scale(.72); opacity: 0; }
+    }
+
+    @keyframes effectLidOpen {
+      0%, 54% { transform: translateY(0) rotate(0deg); }
+      68% { transform: translateY(-60px) rotate(-9deg); }
+      88% { transform: translateY(-48px) rotate(-6deg); opacity: 1; }
+      100% { transform: translateY(-48px) rotate(-6deg); opacity: 0; }
+    }
+
+    @keyframes effectItemFly {
+      0%, 56% { opacity: 0; transform: translateX(-50%) translateY(80px) scale(.25) rotate(45deg); }
+      66% { opacity: 1; transform: translateX(-50%) translateY(-36px) scale(1.12) rotate(45deg); }
+      86% { opacity: 1; transform: translateX(-50%) translateY(-80px) scale(1) rotate(45deg); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-106px) scale(.86) rotate(45deg); }
+    }
+
+    @keyframes effectItemFlyRainbow {
+      0%, 56% { opacity: 0; transform: translateX(-50%) translateY(80px) scale(.25) rotate(0deg); }
+      66% { opacity: 1; transform: translateX(-50%) translateY(-36px) scale(1.22) rotate(180deg); }
+      86% { opacity: 1; transform: translateX(-50%) translateY(-80px) scale(1.05) rotate(540deg); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-106px) scale(.9) rotate(720deg); }
+    }
+
+    @keyframes effectItemFlyNoRotate {
+      0%, 56% { opacity: 0; transform: translateX(-50%) translateY(80px) scale(.25); }
+      66% { opacity: 1; transform: translateX(-50%) translateY(-36px) scale(1.12); }
+      86% { opacity: 1; transform: translateX(-50%) translateY(-80px) scale(1); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-106px) scale(.86); }
+    }
+
+    @keyframes effectBeamRise {
+      0%, 56% { opacity: 0; transform: translateX(-50%) scaleY(.15); }
+      66% { opacity: .88; transform: translateX(-50%) scaleY(1); }
+      86% { opacity: .52; transform: translateX(-50%) scaleY(.92); }
+      100% { opacity: 0; transform: translateX(-50%) scaleY(.8); }
+    }
+
+    @keyframes effectInnerLight {
+      0%, 54% { opacity: 0; transform: translateX(-50%) scale(.3); }
+      66% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+      88% { opacity: .75; transform: translateX(-50%) scale(1); }
+      100% { opacity: 0; transform: translateX(-50%) scale(1.15); }
+    }
+
+    @keyframes effectAuraBurst {
+      0%, 54% { opacity: 0; transform: translateX(-50%) scale(.3); }
+      66% { opacity: .92; transform: translateX(-50%) scale(1.08); }
+      88% { opacity: .48; transform: translateX(-50%) scale(.98); }
+      100% { opacity: 0; transform: translateX(-50%) scale(1.2); }
+    }
+
+    @keyframes effectSparkleShow {
+      0%, 56% { opacity: 0; }
+      66% { opacity: 1; }
+      88% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes effectSparkleMove {
+      0%, 100% { transform: translateY(0) scale(.55) rotate(0deg); opacity: .35; }
+      50% { transform: translateY(-16px) scale(1.25) rotate(18deg); opacity: 1; }
+    }
+
+    @keyframes effectLayerFade {
+      0%, 90% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes effectRainbowMove {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 320% 50%; }
+    }
+
+    @keyframes screenFlash {
+      0% { opacity: 0; }
+      18% { opacity: .95; }
+      100% { opacity: 0; }
+    }
+
   </style>
 </head>
 <body>
@@ -330,12 +778,15 @@
     </div>
   </header>
 
+  <section class="top-status">
+    <div class="global-last-drop">
+      最終ドロップから：<span id="globalLastDropElapsed">未記録</span>
+    </div>
+  </section>
+
   <main>
     <section class="controls">
       <div class="card">
-        <div class="global-last-drop">
-          最終ドロップから：<span id="globalLastDropElapsed">未記録</span>
-        </div>
         <label>クールダウン時間（分） 1〜1000</label>
         <div class="number-stepper">
           <button class="step-btn" onclick="stepCooldown(-1)" aria-label="1分減らす">−</button>
@@ -357,9 +808,8 @@
         <label style="margin-top:12px;">音量：<span id="volumeLabel">50</span>%（0〜200%）</label>
         <input id="volumeSlider" type="range" min="0" max="200" value="50" />
       </div>
-
-      <div class="card">
-        <label>一括操作</label>
+<div class="card">
+        <label>宝箱演出</label><button id="chestEffectBtn" class="chest-effect-toggle" onclick="toggleChestEffect()">宝箱演出ON</button><label>一括操作</label>
         <div class="preset-row">
           <button class="danger" onclick="resetAll()">ドロップ状況リセット</button>
           <button class="danger" onclick="clearLogs()">ログを全て削除</button>
@@ -403,6 +853,27 @@
     </section>
   </main>
 
+
+  <div id="screenFlash" class="screen-flash"></div>
+  <div id="dropEffectLayer" class="drop-effect-layer">
+    <div id="effectChest" class="effect-chest blue">
+      <div class="effect-aura"></div>
+      <div id="effectBeam" class="effect-beam"></div>
+      <div class="effect-inner-light"></div>
+      <div id="effectItem" class="effect-item white"></div>
+      <div id="effectChestLid" class="effect-chest-lid"></div>
+      <div id="effectChestBox" class="effect-chest-box"></div>
+      <div class="effect-lock"></div>
+      <div class="effect-sparkles">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    このサイトは非公式のファンメイドツールです。Taskbar Hero公式および関係者とは関係ありません。
+  </div>
+
   <script>
     const stages = [
       { difficulty: "ノーマル", stage: "1-1", boxLevel: 1 },
@@ -425,6 +896,8 @@
     let lastDropByBoxLevel = {};
     let lastDropByStage = {};
     let globalLastDropTime = null;
+    let chestEffectEnabled = true;
+    let chestEffectTimer = null;
 
     const grid = document.getElementById("stageGrid");
     const cooldownInput = document.getElementById("cooldownInput");
@@ -437,6 +910,14 @@
 
     function stageKey(item) {
       return `${item.difficulty}-${item.stage}`;
+    }
+
+    function difficultyClass(difficulty) {
+      if (difficulty === "ノーマル") return "normal";
+      if (difficulty === "ナイトメア") return "nightmare";
+      if (difficulty === "ヘル") return "hell";
+      if (difficulty === "トーメント") return "torment";
+      return "";
     }
 
     function clampCooldown(value) {
@@ -484,7 +965,7 @@
 
         const state = timers[key];
         const div = document.createElement("div");
-        div.className = `stage ${state.ready ? "ready" : state.dropped ? "waiting" : ""}`;
+        div.className = `stage ${difficultyClass(item.difficulty)} ${state.ready ? "ready" : state.dropped ? "waiting" : ""}`;
         div.id = `card-${key}`;
 
         div.innerHTML = `
@@ -513,13 +994,168 @@
       return stages.find(item => stageKey(item) === key);
     }
 
+
+    function toggleChestEffect() {
+      chestEffectEnabled = !chestEffectEnabled;
+      const btn = document.getElementById("chestEffectBtn");
+      if (btn) btn.textContent = chestEffectEnabled ? "宝箱演出ON" : "宝箱演出OFF";
+    }
+
+    function rollEffectByTable(table) {
+      const r = Math.random() * 100;
+      let sum = 0;
+      for (const row of table) {
+        sum += row.rate;
+        if (r < sum) return row.color;
+      }
+      return table[table.length - 1].color;
+    }
+
+    function rollEffectItemColor(chestColor) {
+      const tables = {
+        blue: [
+          { color: "white", rate: 64 },
+          { color: "yellow", rate: 20 },
+          { color: "red", rate: 10 },
+          { color: "purple", rate: 5 },
+          { color: "rainbow", rate: 1 }
+        ],
+        yellow: [
+          { color: "yellow", rate: 65 },
+          { color: "red", rate: 20 },
+          { color: "purple", rate: 10 },
+          { color: "rainbow", rate: 5 }
+        ],
+        red: [
+          { color: "red", rate: 70 },
+          { color: "purple", rate: 20 },
+          { color: "rainbow", rate: 10 }
+        ],
+        purple: [
+          { color: "purple", rate: 50 },
+          { color: "rainbow", rate: 50 }
+        ],
+        rainbow: [
+          { color: "rainbow", rate: 100 }
+        ]
+      };
+
+      const rolled = rollEffectByTable(tables[chestColor]);
+      if (rolled === "purple") {
+        const special = Math.random();
+        if (special < 0.25) return "boots";
+        if (special < 0.50) return "crystal";
+        return "purple";
+      }
+      return rolled;
+    }
+
+    function effectChestColorByElapsed(seconds) {
+      const r = Math.random() * 100;
+
+      // 30分未満
+      if (seconds < 30 * 60) {
+        if (r < 1) return "rainbow";
+        if (r < 11) return "purple";   // 10%
+        if (r < 26) return "red";      // 15%
+        if (r < 46) return "yellow";   // 20%
+        return "blue";                 // 54%
+      }
+
+      // 30分以上1時間未満
+      if (seconds < 60 * 60) {
+        if (r < 1) return "rainbow";
+        if (r < 16) return "purple";   // 15%
+        if (r < 46) return "red";      // 30%
+        return "yellow";               // 54%
+      }
+
+      // 1時間以上
+      if (r < 1) return "rainbow";     // 1%
+      if (r < 26) return "purple";     // 25%
+      return "red";                    // 74%
+    }
+
+    function getEffectItemCssColor(color) {
+      if (color === "white") return "#b0b0b0";
+      if (color === "yellow") return "#ffd84d";
+      if (color === "red") return "#ff3b4f";
+      if (color === "purple" || color === "boots") return "#a45cff";
+      if (color === "crystal") return "#9ff8ff";
+      return "#ffffff";
+    }
+
+    function triggerEffectFlash() {
+      const flash = document.getElementById("screenFlash");
+      if (!flash) return;
+      flash.classList.remove("flash");
+      void flash.offsetWidth;
+      flash.classList.add("flash");
+    }
+
+    function applyEffectChestColor(chestColor) {
+      const lid = document.getElementById("effectChestLid");
+      const box = document.getElementById("effectChestBox");
+      if (!lid || !box) return;
+
+      const colors = {
+        blue: "linear-gradient(180deg, #3f83cf, #245690)",
+        yellow: "linear-gradient(180deg, #d0a24a, #8f6820)",
+        red: "linear-gradient(180deg, #b93542, #741722)",
+        purple: "linear-gradient(180deg, #8050b2, #472468)",
+        rainbow: "linear-gradient(90deg, #ff3b4f, #ffb13b, #fff23b, #38d47a, #2f8cff, #a45cff, #ff3b4f)"
+      };
+
+      lid.style.background = colors[chestColor] || colors.blue;
+      box.style.background = colors[chestColor] || colors.blue;
+      lid.style.backgroundSize = chestColor === "rainbow" ? "320% 320%" : "";
+      box.style.backgroundSize = chestColor === "rainbow" ? "320% 320%" : "";
+    }
+
+    function playDropEffect(secondsSinceStageDrop) {
+      if (!chestEffectEnabled) return;
+
+      const layer = document.getElementById("dropEffectLayer");
+      const chest = document.getElementById("effectChest");
+      const item = document.getElementById("effectItem");
+      const beam = document.getElementById("effectBeam");
+      if (!layer || !chest || !item || !beam) return;
+
+      const chestColor = effectChestColorByElapsed(secondsSinceStageDrop || 0);
+      const itemColor = rollEffectItemColor(chestColor);
+      const itemCssColor = getEffectItemCssColor(itemColor);
+
+      clearTimeout(chestEffectTimer);
+
+      layer.classList.remove("show");
+      chest.className = `effect-chest ${chestColor}`;
+      item.className = `effect-item ${itemColor}`;
+      chest.style.setProperty("--item-color", itemCssColor);
+      beam.style.setProperty("--item-color", itemCssColor);
+      applyEffectChestColor(chestColor);
+
+      if (chestColor === "rainbow" || itemColor === "rainbow") {
+        triggerEffectFlash();
+      }
+
+      void layer.offsetWidth;
+      layer.classList.add("show");
+
+      chestEffectTimer = setTimeout(() => {
+        layer.classList.remove("show");
+      }, 3000);
+    }
+
+
     function markDropped(key) {
       syncCooldownInput();
 
       const item = getStageByKey(key);
       const now = Date.now();
       const lastSameBoxDrop = lastDropByBoxLevel[item.boxLevel];
+      const previousStageDrop = lastDropByStage[key];
       const secondsSinceSameBox = lastSameBoxDrop ? Math.round((now - lastSameBoxDrop) / 1000) : null;
+      const secondsSinceStageDrop = previousStageDrop ? Math.round((now - previousStageDrop) / 1000) : 0;
 
       dropLogs.unshift({
         id: dropLogs.length + 1,
@@ -541,6 +1177,7 @@
         notified: false,
       };
 
+      playDropEffect(secondsSinceStageDrop);
       updateAll();
       renderLogs();
     }
