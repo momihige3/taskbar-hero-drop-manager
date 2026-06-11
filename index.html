@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>タスクバーヒーロー箱ドロップ管理</title>
+  <style>
+    :root {
+      --bg: #10131a;
+      --panel: #181d27;
+      --panel2: #202736;
+      --text: #f2f5fb;
+      --muted: #aab3c5;
+      --accent: #5cc8ff;
+      --ok: #38d47a;
+      --wait: #ffcf5c;
+      --danger: #ff5c7a;
+      --line: #30394d;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      padding: 20px;
+      background: linear-gradient(135deg, #152033, #10131a);
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.2);
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .number-stepper {
+      display: grid;
+      grid-template-columns: 58px 1fr 58px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .step-btn {
+      min-height: 48px;
+      font-size: 26px;
+      line-height: 1;
+      border-radius: 12px;
+      touch-action: manipulation;
+      user-select: none;
+    }
+
+    input[type="number"], input[type="range"] {
+      width: 100%;
+    }
+
+    input[type="number"] {
+      min-height: 48px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--panel2);
+      color: var(--text);
+      font-size: 18px;
+      text-align: center;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: var(--panel2);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform .05s ease, filter .1s ease, background .15s ease;
+    }
+
+    button:hover { filter: brightness(1.12); }
+    button:active { transform: translateY(1px); }
+
+    .primary { background: #176b9a; }
+    .danger { background: #9b2540; }
+
+    .preset-row, .sound-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .stage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .stage {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stage.ready {
+      border-color: rgba(56, 212, 122, .8);
+      background: linear-gradient(135deg, rgba(56,212,122,.23), var(--panel));
+    }
+
+    .stage.waiting {
+      border-color: rgba(255, 207, 92, .55);
+      background: linear-gradient(135deg, rgba(255,207,92,.16), var(--panel));
+    }
+
+    .stage-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .difficulty {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .stage-name {
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .box-level {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    .timer {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: .03em;
+      margin: 8px 0 10px;
+    }
+
+    .status {
+      color: var(--muted);
+      min-height: 22px;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .last-stage-drop {
+      color: var(--accent);
+      min-height: 22px;
+      margin-bottom: 12px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .global-last-drop {
+      color: var(--accent);
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 12px;
+      padding: 10px;
+      border-radius: 12px;
+      background: var(--panel2);
+      border: 1px solid var(--line);
+    }
+
+    .stage-actions {
+      display: grid;
+      grid-template-columns: 1fr 48px;
+      gap: 8px;
+    }
+
+    .stage-actions button {
+      min-height: 44px;
+    }
+
+    .manual-ready {
+      background: #9b2540;
+      width: 40px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+      padding: 0 !important;
+      font-size: 18px;
+      opacity: 0.85;
+      justify-self: end;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .drop-btn.dropped { background: #936b13; }
+    .manual-ready { background: #9b2540; }
+
+    .small {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    .log-section {
+      margin-top: 18px;
+    }
+
+    .toggle-log {
+      flex: 1 1 240px;
+      min-height: 48px;
+      background: #263248;
+      font-size: 16px;
+    }
+
+    .log-content {
+      display: none;
+      margin-top: 12px;
+    }
+
+    .log-content.open {
+      display: block;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .summary-item {
+      background: var(--panel2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .summary-item strong {
+      display: block;
+      font-size: 18px;
+      margin-top: 4px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 680px;
+      background: var(--panel);
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    th {
+      color: var(--muted);
+      background: var(--panel2);
+      position: sticky;
+      top: 0;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    footer {
+      color: var(--muted);
+      text-align: center;
+      padding: 18px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>タスクバーヒーロー箱ドロップ管理</h1>
+    <div class="note">
+      ドロップを押すと、設定したクールダウンでカウント開始。時間が来たら音が鳴り、対象のレベルが緑になります。
+    </div>
+  </header>
+
+  <main>
+    <section class="controls">
+      <div class="card">
+        <div class="global-last-drop">
+          最終ドロップから：<span id="globalLastDropElapsed">未記録</span>
+        </div>
+        <label>クールダウン時間（分） 1〜1000</label>
+        <div class="number-stepper">
+          <button class="step-btn" onclick="stepCooldown(-1)" aria-label="1分減らす">−</button>
+          <input id="cooldownInput" type="number" min="1" max="1000" step="1" value="6" inputmode="numeric" />
+          <button class="step-btn" onclick="stepCooldown(1)" aria-label="1分増やす">＋</button>
+        </div>
+        <div class="preset-row" style="margin-top:10px;">
+          <button class="primary" onclick="setPreset(6)">6分</button>
+          <button class="primary" onclick="setPreset(12)">12分</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <label>サウンド</label>
+        <div class="sound-row">
+          <button id="muteBtn" onclick="toggleMute()">ミュートOFF</button>
+          <button onclick="testSound()">音テスト</button>
+        </div>
+        <label style="margin-top:12px;">音量：<span id="volumeLabel">50</span>%（0〜200%）</label>
+        <input id="volumeSlider" type="range" min="0" max="200" value="50" />
+      </div>
+
+      <div class="card">
+        <label>一括操作</label>
+        <div class="preset-row">
+          <button class="danger" onclick="resetAll()">ドロップ状況リセット</button>
+          <button class="danger" onclick="clearLogs()">ログを全て削除</button>
+        </div>
+        <div class="small">ドロップ状況リセットは全ステージを未ドロップ状態に戻す。ログ削除は集計と履歴を消す。</div>
+      </div>
+    </section>
+
+    <section id="stageGrid" class="stage-grid"></section>
+
+    <section class="log-section">
+      <div class="preset-row">
+        <button class="toggle-log" onclick="toggleLog()">集計・ログを展開/縮小</button>
+        <button class="toggle-log" onclick="downloadCsv()">CSVで保存</button>
+      </div>
+      <div id="logContent" class="log-content">
+        <div class="card">
+          <label>箱レベル別ドロップ集計</label>
+          <div id="summaryGrid" class="summary-grid"></div>
+        </div>
+
+        <div class="card" style="margin-top:12px;">
+          <label>ドロップログ</label>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>時刻</th>
+                  <th>難易度</th>
+                  <th>ステージ</th>
+                  <th>箱レベル</th>
+                  <th>前回からのドロップ時間</th>
+                </tr>
+              </thead>
+              <tbody id="logTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const stages = [
+      { difficulty: "ノーマル", stage: "1-1", boxLevel: 1 },
+      { difficulty: "ノーマル", stage: "1-4", boxLevel: 5 },
+      { difficulty: "ノーマル", stage: "1-8", boxLevel: 10 },
+      { difficulty: "ノーマル", stage: "2-3", boxLevel: 15 },
+      { difficulty: "ノーマル", stage: "2-8", boxLevel: 20 },
+      { difficulty: "ノーマル", stage: "3-8", boxLevel: 30 },
+      { difficulty: "ナイトメア", stage: "1-9", boxLevel: 40 },
+      { difficulty: "ナイトメア", stage: "3-5", boxLevel: 50 },
+      { difficulty: "ヘル", stage: "2-5", boxLevel: 65 },
+      { difficulty: "トーメント", stage: "1-3", boxLevel: 80 },
+    ];
+
+    let cooldownMinutes = 6;
+    let muted = false;
+    let volume = 0.5;
+    let timers = {};
+    let dropLogs = [];
+    let lastDropByBoxLevel = {};
+    let lastDropByStage = {};
+    let globalLastDropTime = null;
+
+    const grid = document.getElementById("stageGrid");
+    const cooldownInput = document.getElementById("cooldownInput");
+    const volumeSlider = document.getElementById("volumeSlider");
+    const volumeLabel = document.getElementById("volumeLabel");
+    const muteBtn = document.getElementById("muteBtn");
+    const logContent = document.getElementById("logContent");
+    const summaryGrid = document.getElementById("summaryGrid");
+    const logTableBody = document.getElementById("logTableBody");
+
+    function stageKey(item) {
+      return `${item.difficulty}-${item.stage}`;
+    }
+
+    function clampCooldown(value) {
+      let n = Number(value);
+      if (!Number.isFinite(n)) n = 1;
+      n = Math.trunc(n);
+      if (n < 1) n = 1;
+      if (n > 1000) n = 1000;
+      return n;
+    }
+
+    function syncCooldownInput() {
+      const fixed = clampCooldown(cooldownInput.value);
+      cooldownInput.value = fixed;
+      cooldownMinutes = fixed;
+    }
+
+    cooldownInput.addEventListener("input", syncCooldownInput);
+    cooldownInput.addEventListener("change", syncCooldownInput);
+    cooldownInput.addEventListener("blur", syncCooldownInput);
+
+    function stepCooldown(delta) {
+      const current = clampCooldown(cooldownInput.value);
+      cooldownInput.value = clampCooldown(current + delta);
+      syncCooldownInput();
+    }
+
+    function setPreset(minutes) {
+      cooldownInput.value = minutes;
+      syncCooldownInput();
+    }
+
+    function render() {
+      grid.innerHTML = "";
+      stages.forEach(item => {
+        const key = stageKey(item);
+        if (!timers[key]) {
+          timers[key] = {
+            dropped: false,
+            ready: false,
+            endTime: null,
+            notified: false,
+          };
+        }
+
+        const state = timers[key];
+        const div = document.createElement("div");
+        div.className = `stage ${state.ready ? "ready" : state.dropped ? "waiting" : ""}`;
+        div.id = `card-${key}`;
+
+        div.innerHTML = `
+          <div class="stage-header">
+            <div>
+              <div class="difficulty">${item.difficulty}</div>
+              <div class="stage-name">${item.stage}</div>
+            </div>
+            <div class="box-level">箱レベル: ${item.boxLevel}</div>
+          </div>
+          <div class="timer" id="timer-${key}">--:--</div>
+          <div class="status" id="status-${key}">未ドロップ</div>
+          <div class="last-stage-drop" id="lastdrop-${key}"></div>
+          <div class="stage-actions">
+            <button id="drop-${key}" class="drop-btn" onclick="markDropped('${key}')">ドロップ</button>
+            <button class="manual-ready" onclick="resetStage('${key}')" title="個別リセット">🗑️</button>
+          </div>
+        `;
+        grid.appendChild(div);
+      });
+      updateAll();
+      renderLogs();
+    }
+
+    function getStageByKey(key) {
+      return stages.find(item => stageKey(item) === key);
+    }
+
+    function markDropped(key) {
+      syncCooldownInput();
+
+      const item = getStageByKey(key);
+      const now = Date.now();
+      const lastSameBoxDrop = lastDropByBoxLevel[item.boxLevel];
+      const secondsSinceSameBox = lastSameBoxDrop ? Math.round((now - lastSameBoxDrop) / 1000) : null;
+
+      dropLogs.unshift({
+        id: dropLogs.length + 1,
+        timestamp: now,
+        difficulty: item.difficulty,
+        stage: item.stage,
+        boxLevel: item.boxLevel,
+        secondsSinceSameBox,
+      });
+
+      lastDropByBoxLevel[item.boxLevel] = now;
+      lastDropByStage[key] = now;
+      globalLastDropTime = now;
+
+      timers[key] = {
+        dropped: true,
+        ready: false,
+        endTime: now + cooldownMinutes * 60 * 1000,
+        notified: false,
+      };
+
+      updateAll();
+      renderLogs();
+    }
+
+    function resetStage(key) {
+      timers[key] = {
+        dropped: false,
+        ready: false,
+        endTime: null,
+        notified: false,
+      };
+      delete lastDropByStage[key];
+      updateAll();
+    }
+
+    function resetAll() {
+      for (const key of Object.keys(timers)) {
+        timers[key] = {
+          dropped: false,
+          ready: false,
+          endTime: null,
+          notified: false,
+        };
+      }
+
+      // 各カードの前回ドロップ経過表示も消す
+      lastDropByStage = {};
+
+      updateAll();
+    }
+
+    function toggleMute() {
+      muted = !muted;
+      muteBtn.textContent = muted ? "ミュートON" : "ミュートOFF";
+    }
+
+    volumeSlider.addEventListener("input", () => {
+      volume = Number(volumeSlider.value) / 100;
+      volumeLabel.textContent = volumeSlider.value;
+    });
+
+    function playSound() {
+      if (muted || volume <= 0) return;
+
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const gain = ctx.createGain();
+      gain.gain.value = volume * 0.25;
+      gain.connect(ctx.destination);
+
+      const notes = [880, 1175, 1568];
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        const start = ctx.currentTime + i * 0.12;
+        osc.start(start);
+        osc.stop(start + 0.1);
+      });
+    }
+
+    function testSound() {
+      playSound();
+    }
+
+    function formatTime(ms) {
+      if (ms <= 0) return "00:00";
+      const total = Math.ceil(ms / 1000);
+      const m = Math.floor(total / 60);
+      const s = total % 60;
+      return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    }
+
+    function formatDateTime(ms) {
+      const d = new Date(ms);
+      const y = d.getFullYear();
+      const mo = String(d.getMonth() + 1).padStart(2, "0");
+      const da = String(d.getDate()).padStart(2, "0");
+      const h = String(d.getHours()).padStart(2, "0");
+      const mi = String(d.getMinutes()).padStart(2, "0");
+      const s = String(d.getSeconds()).padStart(2, "0");
+      return `${y}/${mo}/${da} ${h}:${mi}:${s}`;
+    }
+
+    function formatSeconds(seconds) {
+      if (seconds === null || seconds === undefined) return "初回";
+      return `${seconds}秒後`;
+    }
+
+    function formatElapsed(ms) {
+      if (ms < 0) ms = 0;
+      const total = Math.floor(ms / 1000);
+      const h = Math.floor(total / 3600);
+      const m = Math.floor((total % 3600) / 60);
+      const s = total % 60;
+      return `${h}時間${m}分${s}秒`;
+    }
+
+    function formatElapsedMinutesSeconds(ms) {
+      if (ms < 0) ms = 0;
+      const total = Math.floor(ms / 1000);
+      const m = Math.floor(total / 60);
+      const s = total % 60;
+      return `${m}分${s}秒`;
+    }
+
+    function updateAll() {
+      const now = Date.now();
+      const globalLastDropElapsed = document.getElementById("globalLastDropElapsed");
+      if (globalLastDropElapsed) {
+        globalLastDropElapsed.textContent = globalLastDropTime ? formatElapsed(now - globalLastDropTime) : "未記録";
+      }
+
+      for (const item of stages) {
+        const key = stageKey(item);
+        const state = timers[key];
+        const card = document.getElementById(`card-${key}`);
+        const timer = document.getElementById(`timer-${key}`);
+        const status = document.getElementById(`status-${key}`);
+        const lastDrop = document.getElementById(`lastdrop-${key}`);
+        const dropBtn = document.getElementById(`drop-${key}`);
+
+        if (!card || !timer || !status || !dropBtn || !lastDrop) continue;
+
+        const stageLastTime = lastDropByStage[key];
+        if (stageLastTime && now - stageLastTime <= 600 * 60 * 1000) {
+          lastDrop.textContent = `前回ドロップから：${formatElapsedMinutesSeconds(now - stageLastTime)}`;
+        } else {
+          lastDrop.textContent = "";
+        }
+
+        card.classList.remove("ready", "waiting");
+        dropBtn.classList.remove("dropped");
+
+        if (!state.dropped && !state.ready) {
+          timer.textContent = "--:--";
+          status.textContent = "未ドロップ";
+          dropBtn.textContent = "ドロップ";
+          continue;
+        }
+
+        if (state.dropped && state.endTime) {
+          const left = state.endTime - now;
+
+          if (left <= 0) {
+            state.dropped = false;
+            state.ready = true;
+            timer.textContent = "READY";
+            status.textContent = "クールダウン完了";
+            card.classList.add("ready");
+            dropBtn.textContent = "再ドロップ";
+            if (!state.notified) {
+              state.notified = true;
+              playSound();
+            }
+          } else {
+            timer.textContent = formatTime(left);
+            status.textContent = "クールダウン中";
+            card.classList.add("waiting");
+            dropBtn.classList.add("dropped");
+            dropBtn.textContent = "再ドロップ";
+          }
+          continue;
+        }
+
+        if (state.ready) {
+          timer.textContent = "READY";
+          status.textContent = "クールダウン完了";
+          card.classList.add("ready");
+          dropBtn.textContent = "再ドロップ";
+        }
+      }
+    }
+
+    function toggleLog() {
+      logContent.classList.toggle("open");
+    }
+
+    function renderLogs() {
+      const counts = {};
+      stages.forEach(item => counts[item.boxLevel] = 0);
+      dropLogs.forEach(log => {
+        counts[log.boxLevel] = (counts[log.boxLevel] || 0) + 1;
+      });
+
+      summaryGrid.innerHTML = Object.keys(counts)
+        .sort((a, b) => Number(a) - Number(b))
+        .map(level => `
+          <div class="summary-item">
+            箱レベル ${level}
+            <strong>${counts[level]}回</strong>
+          </div>
+        `)
+        .join("");
+
+      if (dropLogs.length === 0) {
+        logTableBody.innerHTML = `
+          <tr>
+            <td colspan="6">まだログはない</td>
+          </tr>
+        `;
+        return;
+      }
+
+      logTableBody.innerHTML = dropLogs.map((log, index) => `
+        <tr>
+          <td>${dropLogs.length - index}</td>
+          <td>${formatDateTime(log.timestamp)}</td>
+          <td>${log.difficulty}</td>
+          <td>${log.stage}</td>
+          <td>${log.boxLevel}</td>
+          <td>${formatSeconds(log.secondsSinceSameBox)}</td>
+        </tr>
+      `).join("");
+    }
+
+
+    function clearLogs() {
+      dropLogs = [];
+      lastDropByBoxLevel = {};
+      lastDropByStage = {};
+      globalLastDropTime = null;
+      renderLogs();
+      updateAll();
+    }
+
+    function csvEscape(value) {
+      const text = String(value ?? "");
+      if (/[",\n\r]/.test(text)) {
+        return `"${text.replace(/"/g, '""')}"`;
+      }
+      return text;
+    }
+
+    function downloadCsv() {
+      const headers = ["番号", "時刻", "難易度", "ステージ", "箱レベル", "同じ箱レベルの前回から"];
+      const rows = dropLogs.slice().reverse().map((log, index) => [
+        index + 1,
+        formatDateTime(log.timestamp),
+        log.difficulty,
+        log.stage,
+        log.boxLevel,
+        formatSeconds(log.secondsSinceSameBox)
+      ]);
+
+      const csv = [headers, ...rows]
+        .map(row => row.map(csvEscape).join(","))
+        .join("\r\n");
+
+      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const now = new Date();
+      const stamp = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,"0")}${String(now.getDate()).padStart(2,"0")}_${String(now.getHours()).padStart(2,"0")}${String(now.getMinutes()).padStart(2,"0")}${String(now.getSeconds()).padStart(2,"0")}`;
+      a.href = url;
+      a.download = `taskbar_hero_drop_log_${stamp}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    render();
+    setInterval(updateAll, 250);
+  </script>
+</body>
+</html>
