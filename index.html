@@ -908,6 +908,364 @@
       }
     }
 
+  
+    .view-toggle-btn {
+      margin-left: auto;
+      min-height: 40px;
+      padding: 8px 14px;
+      font-size: 14px;
+    }
+
+    .stage-grid.compact {
+      grid-template-columns: 1fr !important;
+    }
+
+    .stage-grid.compact .stage {
+      display: grid;
+      grid-template-columns: minmax(86px, auto) 1fr 48px;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+    }
+
+    .stage-grid.compact .stage-header {
+      margin-bottom: 0;
+    }
+
+    .stage-grid.compact .stage-name {
+      font-size: 18px;
+    }
+
+    .stage-grid.compact .box-level {
+      display: none;
+    }
+
+    .stage-grid.compact .stage-actions {
+      display: contents;
+    }
+
+    .stage-grid.compact .drop-btn {
+      min-height: 44px;
+    }
+
+    .stage-grid.compact .manual-ready {
+      width: 40px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+    }
+
+    .stage-grid.compact .stage .timer,
+    .stage-grid.compact .stage .status,
+    .stage-grid.compact .stage .last-drop,
+    .stage-grid.compact .stage .run-time-label {
+      display: none;
+    }
+
+  
+.stage-grid.compact {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.stage-grid.compact > * {
+  width: 100% !important;
+}
+
+.stage-grid.compact .stage {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+
+    body.simple-view .stage-grid,
+    .stage-grid.compact {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 8px !important;
+      grid-template-columns: none !important;
+    }
+
+    body.simple-view .stage,
+    .stage-grid.compact .stage {
+      width: 100% !important;
+      min-height: 0 !important;
+      display: grid !important;
+      grid-template-columns: 110px 1fr 44px !important;
+      grid-template-areas: "info drop reset" !important;
+      align-items: center !important;
+      gap: 8px !important;
+      padding: 10px 12px !important;
+    }
+
+    body.simple-view .stage-header,
+    .stage-grid.compact .stage-header {
+      grid-area: info !important;
+      margin: 0 !important;
+      display: block !important;
+    }
+
+    body.simple-view .stage-name,
+    .stage-grid.compact .stage-name {
+      font-size: 18px !important;
+      line-height: 1.1 !important;
+    }
+
+    body.simple-view .difficulty,
+    .stage-grid.compact .difficulty {
+      font-size: 12px !important;
+    }
+
+    body.simple-view .box-level,
+    .stage-grid.compact .box-level,
+    body.simple-view .timer,
+    .stage-grid.compact .timer,
+    body.simple-view .status,
+    .stage-grid.compact .status,
+    body.simple-view .last-stage-drop,
+    .stage-grid.compact .last-stage-drop,
+    body.simple-view .run-time-label,
+    .stage-grid.compact .run-time-label {
+      display: none !important;
+    }
+
+    body.simple-view .stage-actions,
+    .stage-grid.compact .stage-actions {
+      display: contents !important;
+    }
+
+    body.simple-view .drop-btn,
+    .stage-grid.compact .drop-btn {
+      grid-area: drop !important;
+      width: 100% !important;
+      min-height: 44px !important;
+      font-size: 15px !important;
+    }
+
+    body.simple-view .manual-ready,
+    .stage-grid.compact .manual-ready {
+      grid-area: reset !important;
+      width: 40px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+      justify-self: end !important;
+    }
+
+  
+    /* シンプル / フルサイズ切替 強制適用 */
+    body.simple-view .stage-grid,
+    .stage-grid.compact {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 8px !important;
+      grid-template-columns: none !important;
+    }
+
+    body.simple-view .stage,
+    .stage-grid.compact .stage {
+      width: 100% !important;
+      min-height: 0 !important;
+      display: grid !important;
+      grid-template-columns: 110px 1fr 44px !important;
+      grid-template-areas: "info drop reset" !important;
+      align-items: center !important;
+      gap: 8px !important;
+      padding: 10px 12px !important;
+    }
+
+    body.simple-view .stage-header,
+    .stage-grid.compact .stage-header {
+      grid-area: info !important;
+      margin: 0 !important;
+      display: block !important;
+    }
+
+    body.simple-view .stage-name,
+    .stage-grid.compact .stage-name {
+      font-size: 18px !important;
+      line-height: 1.1 !important;
+    }
+
+    body.simple-view .difficulty,
+    .stage-grid.compact .difficulty {
+      font-size: 12px !important;
+    }
+
+    body.simple-view .box-level,
+    .stage-grid.compact .box-level,
+    body.simple-view .timer,
+    .stage-grid.compact .timer,
+    body.simple-view .status,
+    .stage-grid.compact .status,
+    body.simple-view .last-stage-drop,
+    .stage-grid.compact .last-stage-drop,
+    body.simple-view .run-time-label,
+    .stage-grid.compact .run-time-label {
+      display: none !important;
+    }
+
+    body.simple-view .stage-actions,
+    .stage-grid.compact .stage-actions {
+      display: contents !important;
+    }
+
+    body.simple-view .drop-btn,
+    .stage-grid.compact .drop-btn {
+      grid-area: drop !important;
+      width: 100% !important;
+      min-height: 44px !important;
+      font-size: 15px !important;
+    }
+
+    body.simple-view .manual-ready,
+    .stage-grid.compact .manual-ready {
+      grid-area: reset !important;
+      width: 40px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+      justify-self: end !important;
+    }
+
+  
+    /* シンプル表示：情報を残して1エリア1行 */
+    body.simple-view .stage,
+    .stage-grid.compact .stage {
+      grid-template-columns: minmax(116px, auto) 72px minmax(90px, auto) minmax(80px, auto) minmax(90px, auto) auto auto !important;
+      grid-template-areas: "info timer status runtime last drop reset" !important;
+      align-items: center !important;
+      gap: 8px !important;
+      padding: 8px 10px !important;
+      overflow-x: auto !important;
+    }
+
+    body.simple-view .stage-header,
+    .stage-grid.compact .stage-header {
+      grid-area: info !important;
+      margin: 0 !important;
+      display: block !important;
+      min-width: 116px !important;
+    }
+
+    body.simple-view .box-level,
+    .stage-grid.compact .box-level {
+      display: block !important;
+      text-align: left !important;
+      font-size: 11px !important;
+      margin-top: 2px !important;
+    }
+
+    body.simple-view .timer,
+    .stage-grid.compact .timer {
+      display: block !important;
+      grid-area: timer !important;
+      font-size: 18px !important;
+      margin: 0 !important;
+      white-space: nowrap !important;
+      min-width: 72px !important;
+    }
+
+    body.simple-view .status,
+    .stage-grid.compact .status {
+      display: block !important;
+      grid-area: status !important;
+      margin: 0 !important;
+      min-height: 0 !important;
+      white-space: nowrap !important;
+      font-size: 13px !important;
+      min-width: 90px !important;
+    }
+
+    body.simple-view .run-time-label,
+    .stage-grid.compact .run-time-label {
+      display: block !important;
+      grid-area: runtime !important;
+      margin: 0 !important;
+      min-height: 0 !important;
+      white-space: nowrap !important;
+      font-size: 12px !important;
+      min-width: 80px !important;
+    }
+
+    body.simple-view .last-stage-drop,
+    .stage-grid.compact .last-stage-drop {
+      display: block !important;
+      grid-area: last !important;
+      margin: 0 !important;
+      min-height: 0 !important;
+      white-space: nowrap !important;
+      font-size: 12px !important;
+      min-width: 90px !important;
+    }
+
+    body.simple-view .drop-btn,
+    .stage-grid.compact .drop-btn {
+      grid-area: drop !important;
+      width: auto !important;
+      min-width: 78px !important;
+      max-width: 96px !important;
+      min-height: 38px !important;
+      padding: 8px 10px !important;
+      font-size: 13px !important;
+      justify-self: end !important;
+    }
+
+    body.simple-view .manual-ready,
+    .stage-grid.compact .manual-ready {
+      grid-area: reset !important;
+      width: 36px !important;
+      height: 36px !important;
+      min-height: 36px !important;
+      font-size: 16px !important;
+      justify-self: end !important;
+    }
+
+    @media (max-width: 640px) {
+      body.simple-view .stage,
+      .stage-grid.compact .stage {
+        grid-template-columns: minmax(96px, auto) 64px minmax(78px, auto) minmax(72px, auto) minmax(76px, auto) auto auto !important;
+        gap: 6px !important;
+        padding: 7px 8px !important;
+      }
+
+      body.simple-view .stage-name,
+      .stage-grid.compact .stage-name {
+        font-size: 16px !important;
+      }
+
+      body.simple-view .difficulty,
+      .stage-grid.compact .difficulty,
+      body.simple-view .box-level,
+      .stage-grid.compact .box-level {
+        font-size: 10px !important;
+      }
+
+      body.simple-view .timer,
+      .stage-grid.compact .timer {
+        font-size: 16px !important;
+        min-width: 64px !important;
+      }
+
+      body.simple-view .status,
+      .stage-grid.compact .status,
+      body.simple-view .run-time-label,
+      .stage-grid.compact .run-time-label,
+      body.simple-view .last-stage-drop,
+      .stage-grid.compact .last-stage-drop {
+        font-size: 11px !important;
+      }
+
+      body.simple-view .drop-btn,
+      .stage-grid.compact .drop-btn {
+        min-width: 70px !important;
+        max-width: 82px !important;
+        min-height: 36px !important;
+        padding: 7px 8px !important;
+        font-size: 12px !important;
+      }
+    }
+
   </style>
 <!-- Cloudflare Web Analytics -->
 <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f48e7088e55c41f4a0a6044f8bf3531b"}'></script>
@@ -915,7 +1273,10 @@
 </head>
 <body>
   <header>
-    <h1>タスクバーヒーロー箱ドロップ管理</h1>
+    <div style="display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;">
+<h1>タスクバーヒーロー箱ドロップ管理</h1>
+<button class="view-toggle-btn" id="viewToggleBtn" type="button">シンプル</button>
+</div>
     <div class="note">
       ドロップを押すと、設定したクールダウンでカウント開始。時間が来たら音が鳴り、対象のレベルが緑になります。
     </div>
@@ -1869,6 +2230,53 @@
 
     render();
     setInterval(updateAll, 250);
-  </script>
+  
+    // シンプル / フルサイズ切替
+    let simpleView = false;
+
+    function applySimpleView() {
+      const grid = document.getElementById("stageGrid");
+      const btn = document.getElementById("viewToggleBtn");
+
+      document.body.classList.toggle("simple-view", simpleView);
+
+      if (grid) {
+        grid.classList.toggle("compact", simpleView);
+      }
+
+      if (btn) {
+        btn.textContent = simpleView ? "フルサイズ" : "シンプル";
+      }
+    }
+
+    function toggleCompactView() {
+      simpleView = !simpleView;
+      applySimpleView();
+    }
+
+    function setupViewToggleButton() {
+      const btn = document.getElementById("viewToggleBtn");
+      if (!btn || btn.dataset.ready === "1") return;
+
+      btn.dataset.ready = "1";
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleCompactView();
+      });
+
+      btn.addEventListener("touchend", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleCompactView();
+      }, { passive: false });
+
+      applySimpleView();
+    }
+
+    setupViewToggleButton();
+    window.addEventListener("DOMContentLoaded", setupViewToggleButton);
+
+</script>
 </body>
 </html>
