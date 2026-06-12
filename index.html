@@ -1266,6 +1266,372 @@
       }
     }
 
+  
+
+    /* v17.6 実修正：シンプル表示の横はみ出し/右下ズレ対策 */
+    .global-label-simple { display: none; }
+    body.simple-view .global-label-full { display: none !important; }
+    body.simple-view .global-label-simple { display: inline !important; }
+
+    /* フル表示では通常の縦並びに固定。過去のgrid-area指定を無効化 */
+    .simple-info-stack {
+      display: block !important;
+      position: static !important;
+      grid-area: auto !important;
+      min-width: 0 !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .simple-info-stack .run-time-label,
+    .simple-info-stack .last-stage-drop {
+      position: static !important;
+      grid-area: auto !important;
+    }
+
+    body.simple-view .stage-grid,
+    body.simple-view .stage-grid.compact {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 8px !important;
+      grid-template-columns: none !important;
+    }
+
+    body.simple-view .stage {
+      width: 100% !important;
+      display: grid !important;
+      grid-template-columns: 96px 72px minmax(0, 1fr) 86px !important;
+      grid-template-areas: "info timer stack drop" !important;
+      align-items: center !important;
+      gap: 8px !important;
+      padding: 8px 10px !important;
+      overflow: hidden !important;
+    }
+
+    body.simple-view .stage-header {
+      grid-area: info !important;
+      min-width: 0 !important;
+      margin: 0 !important;
+      display: block !important;
+    }
+
+    body.simple-view .stage-name {
+      font-size: 16px !important;
+      line-height: 1.05 !important;
+      white-space: nowrap !important;
+    }
+
+    body.simple-view .difficulty,
+    body.simple-view .box-level {
+      font-size: 10px !important;
+      line-height: 1.1 !important;
+      text-align: left !important;
+      white-space: nowrap !important;
+    }
+
+    body.simple-view .timer {
+      grid-area: timer !important;
+      display: block !important;
+      min-width: 0 !important;
+      margin: 0 !important;
+      font-size: 16px !important;
+      line-height: 1.1 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    body.simple-view .status {
+      display: none !important;
+    }
+
+    body.simple-view .simple-info-stack {
+      grid-area: stack !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      align-items: stretch !important;
+      gap: 2px !important;
+      min-width: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow: hidden !important;
+      position: static !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    body.simple-view .simple-info-stack .run-time-label,
+    body.simple-view .simple-info-stack .last-stage-drop {
+      display: block !important;
+      position: static !important;
+      grid-area: auto !important;
+      min-width: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      min-height: 0 !important;
+      line-height: 1.18 !important;
+      font-size: 12px !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      text-align: left !important;
+    }
+
+    body.simple-view .stage-actions {
+      display: contents !important;
+    }
+
+    body.simple-view .drop-btn {
+      grid-area: drop !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      min-height: 52px !important;
+      align-self: stretch !important;
+      justify-self: stretch !important;
+      padding: 6px 4px !important;
+      font-size: 12px !important;
+    }
+
+    body.simple-view .manual-ready {
+      display: none !important;
+    }
+
+    body.simple-view .global-last-drop {
+      font-size: 16px !important;
+      line-height: 1.25 !important;
+      white-space: normal !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    @media (max-width: 430px) {
+      body.simple-view .stage {
+        grid-template-columns: 66px 54px minmax(0, 1fr) 66px !important;
+        gap: 5px !important;
+        padding: 7px 7px !important;
+      }
+      body.simple-view .stage-name { font-size: 14px !important; }
+      body.simple-view .difficulty,
+      body.simple-view .box-level { font-size: 9px !important; }
+      body.simple-view .timer { font-size: 13px !important; }
+      body.simple-view .simple-info-stack .run-time-label,
+      body.simple-view .simple-info-stack .last-stage-drop { font-size: 10px !important; }
+      body.simple-view .drop-btn { min-height: 48px !important; font-size: 11px !important; }
+    }
+
+
+    /* v17.7 修正：前回表示をドロップボタン左に固定。右下ズレ・重なり防止 */
+    body.simple-view .stage,
+    .stage-grid.compact .stage {
+      display: grid !important;
+      grid-template-columns: 72px 58px minmax(0, 1fr) 78px !important;
+      grid-template-areas: "info timer meta drop" !important;
+      align-items: center !important;
+      gap: 6px !important;
+      overflow: hidden !important;
+    }
+
+    body.simple-view .simple-info-stack,
+    .stage-grid.compact .simple-info-stack {
+      grid-area: meta !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      align-self: center !important;
+      justify-self: stretch !important;
+      min-width: 0 !important;
+      max-width: 100% !important;
+      width: 100% !important;
+      position: static !important;
+      inset: auto !important;
+      transform: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      z-index: 1 !important;
+      pointer-events: none !important;
+    }
+
+    body.simple-view .simple-info-stack .run-time-label,
+    body.simple-view .simple-info-stack .last-stage-drop,
+    .stage-grid.compact .simple-info-stack .run-time-label,
+    .stage-grid.compact .simple-info-stack .last-stage-drop {
+      display: block !important;
+      position: static !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      text-align: left !important;
+      line-height: 1.15 !important;
+      font-size: 11px !important;
+    }
+
+    body.simple-view .stage-actions,
+    .stage-grid.compact .stage-actions {
+      display: contents !important;
+    }
+
+    body.simple-view .drop-btn,
+    .stage-grid.compact .drop-btn {
+      grid-area: drop !important;
+      position: static !important;
+      justify-self: stretch !important;
+      align-self: stretch !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      z-index: 2 !important;
+    }
+
+    body.simple-view .manual-ready,
+    .stage-grid.compact .manual-ready {
+      display: none !important;
+    }
+
+    @media (max-width: 640px) {
+      body.simple-view .stage,
+      .stage-grid.compact .stage {
+        grid-template-columns: 68px 56px 76px !important;
+        grid-template-areas:
+          "info timer drop"
+          "meta meta drop" !important;
+        grid-template-rows: auto auto !important;
+        gap: 3px 6px !important;
+        padding: 7px 8px !important;
+      }
+
+      body.simple-view .simple-info-stack,
+      .stage-grid.compact .simple-info-stack {
+        grid-area: meta !important;
+      }
+
+      body.simple-view .drop-btn,
+      .stage-grid.compact .drop-btn {
+        min-height: 48px !important;
+        height: 100% !important;
+        font-size: 11px !important;
+      }
+    }
+
+    @media (max-width: 380px) {
+      body.simple-view .stage,
+      .stage-grid.compact .stage {
+        grid-template-columns: 60px 50px 70px !important;
+      }
+      body.simple-view .stage-name,
+      .stage-grid.compact .stage-name { font-size: 13px !important; }
+      body.simple-view .timer,
+      .stage-grid.compact .timer { font-size: 12px !important; }
+      body.simple-view .simple-info-stack .run-time-label,
+      body.simple-view .simple-info-stack .last-stage-drop,
+      .stage-grid.compact .simple-info-stack .run-time-label,
+      .stage-grid.compact .simple-info-stack .last-stage-drop { font-size: 10px !important; }
+    }
+
+
+    /* v17.8 修正：状態表示を「残り時間」と「周回まで/前回」の間に固定 */
+    body.simple-view .stage,
+    body.simple-view .stage-grid.compact .stage {
+      display: grid !important;
+      grid-template-columns: 72px 58px 78px minmax(0, 1fr) 78px !important;
+      grid-template-areas: "info timer status meta drop" !important;
+      align-items: center !important;
+      gap: 6px !important;
+      overflow: hidden !important;
+    }
+
+    body.simple-view .status,
+    body.simple-view .stage-grid.compact .status {
+      grid-area: status !important;
+      display: block !important;
+      position: static !important;
+      min-width: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      min-height: 0 !important;
+      font-size: 11px !important;
+      line-height: 1.15 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      text-align: left !important;
+      z-index: 1 !important;
+    }
+
+    body.simple-view .simple-info-stack,
+    body.simple-view .stage-grid.compact .simple-info-stack {
+      grid-area: meta !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      min-width: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow: hidden !important;
+      position: static !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    body.simple-view .drop-btn,
+    body.simple-view .stage-grid.compact .drop-btn {
+      grid-area: drop !important;
+      position: static !important;
+      justify-self: stretch !important;
+      align-self: stretch !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      z-index: 2 !important;
+    }
+
+    @media (max-width: 640px) {
+      body.simple-view .stage,
+      body.simple-view .stage-grid.compact .stage {
+        grid-template-columns: 58px 48px minmax(62px, 1fr) 72px !important;
+        grid-template-areas:
+          "info timer status drop"
+          "meta meta meta drop" !important;
+        grid-template-rows: auto auto !important;
+        gap: 3px 5px !important;
+        padding: 7px 8px !important;
+      }
+
+      body.simple-view .status,
+      body.simple-view .stage-grid.compact .status {
+        font-size: 10px !important;
+      }
+
+      body.simple-view .simple-info-stack .run-time-label,
+      body.simple-view .simple-info-stack .last-stage-drop,
+      body.simple-view .stage-grid.compact .simple-info-stack .run-time-label,
+      body.simple-view .stage-grid.compact .simple-info-stack .last-stage-drop {
+        font-size: 10px !important;
+        line-height: 1.15 !important;
+      }
+    }
+
+    @media (max-width: 380px) {
+      body.simple-view .stage,
+      body.simple-view .stage-grid.compact .stage {
+        grid-template-columns: 52px 44px minmax(54px, 1fr) 66px !important;
+      }
+      body.simple-view .status,
+      body.simple-view .stage-grid.compact .status {
+        font-size: 9px !important;
+      }
+    }
+
   </style>
 <!-- Cloudflare Web Analytics -->
 <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f48e7088e55c41f4a0a6044f8bf3531b"}'></script>
@@ -1284,7 +1650,7 @@
 
   <section class="top-status">
     <div class="global-last-drop">
-      最終ドロップから：<span id="globalLastDropElapsed">未記録</span>
+      <span class="global-label-full">最終ドロップから：</span><span class="global-label-simple">前回：</span><span id="globalLastDropElapsed">未記録</span>
     </div>
   </section>
 
@@ -1701,9 +2067,11 @@
             <div class="box-level">箱レベル: ${item.boxLevel}</div>
           </div>
           <div class="timer" id="timer-${key}">--:--</div>
-          <div class="run-time-label" id="runtime-${key}"></div>
           <div class="status" id="status-${key}">未ドロップ</div>
-          <div class="last-stage-drop" id="lastdrop-${key}"></div>
+          <div class="simple-info-stack">
+            <div class="run-time-label" id="runtime-${key}"></div>
+            <div class="last-stage-drop" id="lastdrop-${key}"></div>
+          </div>
           <div class="stage-actions">
             <button id="drop-${key}" class="drop-btn" onclick="markDropped('${key}')">ドロップ</button>
             <button class="manual-ready" onclick="resetStage('${key}')" title="個別リセット">🗑️</button>
@@ -2068,7 +2436,7 @@
 
         const stageLastTime = lastDropByStage[key];
         if (stageLastTime && now - stageLastTime <= 600 * 60 * 1000) {
-          lastDrop.textContent = `前回ドロップから：${formatElapsedMinutesSeconds(now - stageLastTime)}`;
+          lastDrop.textContent = `${document.body.classList.contains("simple-view") ? "前回：" : "最終ドロップから："}${formatElapsedMinutesSeconds(now - stageLastTime)}`;
         } else {
           lastDrop.textContent = "";
         }
@@ -2115,7 +2483,7 @@
                 }
               } else {
                 status.textContent = "クールダウン中";
-                runtime.textContent = `周回開始可能まで ${formatShortSeconds(runStartLeft / 1000)}`;
+                runtime.textContent = document.body.classList.contains("simple-view") ? `周回まで：${formatShortSeconds(runStartLeft / 1000)}` : `周回開始可能まで ${formatShortSeconds(runStartLeft / 1000)}`;
                 card.classList.add("waiting");
               }
             } else {
