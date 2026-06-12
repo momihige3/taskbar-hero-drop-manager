@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>タスクバーヒーロー箱ドロップ管理</title>
+  <title>タスクバーヒーロー箱ドロップ管理 v17.12</title>
   <style>
     :root {
       --bg: #10131a;
@@ -375,6 +375,42 @@
       font-size: 16px;
     }
 
+
+    .effect-test-panel {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      display: none;
+      gap: 8px;
+    }
+
+    .effect-test-panel.unlocked {
+      display: grid;
+    }
+
+    .effect-test-panel select {
+      width: 100%;
+      min-height: 40px;
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .effect-test-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .effect-test-play {
+      width: 100%;
+      min-height: 42px;
+      background: #176b9a;
+    }
+
     .screen-flash {
       position: fixed;
       inset: 0;
@@ -539,10 +575,29 @@
       pointer-events: none;
     }
 
-    .effect-item.white { --item-color: #b0b0b0; --item-outline:#1d1d1d; }
-    .effect-item.yellow { --item-color: #ffd84d; --item-outline:#000000; }
+    .effect-item.white { --item-color: #8a8a8a; --item-outline:#2a2a2a; }
+    .effect-item.green { --item-color: #38d47a; --item-outline:#102818; }
+    .effect-item.blue { --item-color: #1F4DB8; --item-outline:#07122e; }
+    .effect-item.orange { --item-color: #ff9c40; --item-outline:#2e1600; }
     .effect-item.red { --item-color: #ff3b4f; --item-outline:#ffffff; }
     .effect-item.purple { --item-color: #a45cff; --item-outline:#fff3a0; }
+    .effect-item.magenta { --item-color: #d12b86; --item-outline:#fff0fb; }
+    .effect-item.cyan { --item-color: #9ff8ff; --item-outline:#082b35; }
+    .effect-item.yellow { --item-color: #ffd84d; --item-outline:#000000; }
+
+    .effect-item.cosmic {
+      --item-outline: transparent;
+      background:
+        radial-gradient(circle at 30% 24%, rgba(255,255,210,.95), transparent 12%),
+        radial-gradient(circle at 70% 66%, #ffeb3b 0%, transparent 16%),
+        linear-gradient(135deg, #2b0b05 0%, #941b12 28%, #ff6b1a 48%, #ffd84d 58%, #3b0906 76%, #c12017 100%);
+      background-size: 220% 220%;
+      filter:
+        drop-shadow(0 0 10px #fff3a0)
+        drop-shadow(0 0 24px #ff6b1a)
+        drop-shadow(0 0 40px #ff2f2f);
+      animation: effectCosmicMove .85s linear infinite, effectItemFly 3s ease forwards;
+    }
 
     .effect-item.rainbow {
       --item-outline: transparent;
@@ -620,6 +675,181 @@
       background: rgba(255,255,255,.65);
       clip-path: none;
       filter: blur(.5px);
+    }
+
+
+
+    /* v17.10 レアリティ別：アイテム周囲演出（SEなし） */
+    .effect-rarity-aura {
+      position: absolute;
+      left: 50%;
+      bottom: 42px;
+      width: 150px;
+      height: 150px;
+      transform: translateX(-50%) scale(.35);
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 6;
+      animation: rarityAuraPulse 3s ease forwards;
+    }
+
+    .effect-rarity-ring {
+      position: absolute;
+      left: 50%;
+      bottom: 56px;
+      width: 96px;
+      height: 96px;
+      transform: translateX(-50%) scale(.35) rotate(0deg);
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 7;
+      border: 3px solid var(--item-color);
+      box-shadow: 0 0 18px var(--item-color), inset 0 0 16px var(--item-color);
+      animation: rarityRingSpin 3s ease forwards;
+    }
+
+    .effect-rarity-rays {
+      position: absolute;
+      left: 50%;
+      bottom: 50px;
+      width: 128px;
+      height: 128px;
+      transform: translateX(-50%) scale(.35);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 5;
+      background:
+        linear-gradient(0deg, transparent 43%, var(--item-color) 49%, var(--item-color) 51%, transparent 57%),
+        linear-gradient(90deg, transparent 43%, var(--item-color) 49%, var(--item-color) 51%, transparent 57%),
+        linear-gradient(45deg, transparent 45%, rgba(255,255,255,.75) 49%, rgba(255,255,255,.75) 51%, transparent 55%),
+        linear-gradient(135deg, transparent 45%, rgba(255,255,255,.75) 49%, rgba(255,255,255,.75) 51%, transparent 55%);
+      filter: blur(.2px) drop-shadow(0 0 12px var(--item-color));
+      animation: rarityRaysBurst 3s ease forwards;
+    }
+
+    .effect-rarity-aura.common { background: radial-gradient(circle, rgba(138,138,138,.34), transparent 68%); }
+    .effect-rarity-aura.uncommon { background: radial-gradient(circle, rgba(56,212,122,.38), transparent 68%); }
+    .effect-rarity-aura.rare { background: radial-gradient(circle, rgba(31,77,184,.42), transparent 68%); }
+    .effect-rarity-aura.legendary { background: radial-gradient(circle, rgba(255,126,24,.58), rgba(255,156,64,.18) 42%, transparent 70%); }
+    .effect-rarity-aura.immortal { background: radial-gradient(circle, rgba(255,59,79,.58), rgba(255,0,0,.18) 46%, transparent 72%); }
+    .effect-rarity-aura.arcana { background: radial-gradient(circle, rgba(164,92,255,.62), rgba(255,243,160,.20) 44%, transparent 72%); }
+    .effect-rarity-aura.beyond { background: radial-gradient(circle, rgba(209,43,134,.68), rgba(255,80,180,.22) 45%, transparent 72%); }
+    .effect-rarity-aura.celestial { background: radial-gradient(circle, rgba(159,248,255,.76), rgba(92,200,255,.26) 46%, transparent 72%); }
+    .effect-rarity-aura.divine { background: radial-gradient(circle, rgba(255,244,170,.92), rgba(255,216,77,.38) 44%, transparent 74%); }
+    .effect-rarity-aura.cosmic { background: radial-gradient(circle, rgba(255,216,77,.85), rgba(255,70,24,.45) 38%, rgba(70,5,4,.18) 56%, transparent 76%); }
+
+    .effect-rarity-ring.common { border-color: #5f5f5f; box-shadow: 0 0 10px #777, inset 0 0 8px #555; }
+    .effect-rarity-ring.legendary {
+      border-color: #ff7a18;
+      box-shadow: 0 0 20px #ff7a18, 0 0 42px rgba(255,90,0,.45), inset 0 0 20px #ff9c40;
+      border-style: dashed;
+    }
+    .effect-rarity-ring.divine {
+      width: 112px;
+      height: 112px;
+      border-color: #fff3a0;
+      border-style: double;
+      box-shadow: 0 0 24px #fff3a0, 0 0 58px rgba(255,216,77,.75), inset 0 0 22px #ffd84d;
+    }
+    .effect-rarity-ring.cosmic {
+      width: 118px;
+      height: 118px;
+      border-color: #ff6b1a;
+      box-shadow: 0 0 28px #ff6b1a, 0 0 70px rgba(255,47,47,.75), inset 0 0 24px #ffd84d;
+    }
+
+    .effect-rarity-aura.luxury,
+    .effect-rarity-ring.luxury,
+    .effect-rarity-rays.luxury {
+      animation-duration: 3.4s;
+    }
+    .effect-rarity-aura.luxury {
+      width: 190px;
+      height: 190px;
+      bottom: 24px;
+      background:
+        radial-gradient(circle, rgba(255,243,160,.78), rgba(164,92,255,.48) 36%, rgba(72,20,120,.18) 62%, transparent 78%);
+      filter: drop-shadow(0 0 28px #a45cff) drop-shadow(0 0 48px rgba(255,243,160,.72));
+    }
+    .effect-rarity-ring.luxury {
+      width: 128px;
+      height: 128px;
+      border: 4px double #fff3a0;
+      box-shadow: 0 0 26px #fff3a0, 0 0 58px #a45cff, inset 0 0 28px #a45cff;
+    }
+    .effect-rarity-rays.luxury {
+      width: 170px;
+      height: 170px;
+      background:
+        linear-gradient(0deg, transparent 43%, #fff3a0 49%, #fff3a0 51%, transparent 57%),
+        linear-gradient(90deg, transparent 43%, #fff3a0 49%, #fff3a0 51%, transparent 57%),
+        linear-gradient(45deg, transparent 45%, #a45cff 49%, #a45cff 51%, transparent 55%),
+        linear-gradient(135deg, transparent 45%, #a45cff 49%, #a45cff 51%, transparent 55%);
+      filter: drop-shadow(0 0 18px #fff3a0) drop-shadow(0 0 32px #a45cff);
+    }
+
+    .effect-item.boots.luxury::before,
+    .effect-item.boots.luxury::after {
+      background: linear-gradient(180deg, #fff9cb 0%, #d7bcff 32%, #7b4dd9 100%);
+      border-color: #fff3a0;
+      box-shadow:
+        0 0 0 2px #fff3a0 inset,
+        0 0 20px #fff3a0,
+        0 0 36px #a45cff;
+    }
+
+    .effect-item.crystal.luxury {
+      background:
+        radial-gradient(circle at 30% 22%, #ffffff 0%, #fff9cb 15%, transparent 18%),
+        radial-gradient(circle at 42% 36%, #fff3a0 0%, #c99cff 34%, #6c2fc7 100%);
+      box-shadow:
+        0 0 0 4px #fff3a0,
+        0 0 26px #fff3a0,
+        0 0 58px #a45cff;
+    }
+
+
+
+    /* v17.11：Arcana以上だけ背景・周囲演出を表示。Common〜Immortalはアイコンのみ */
+    .effect-chest.no-special .effect-aura,
+    .effect-chest.no-special .effect-beam,
+    .effect-chest.no-special .effect-rarity-aura,
+    .effect-chest.no-special .effect-rarity-ring,
+    .effect-chest.no-special .effect-rarity-rays,
+    .effect-chest.no-special .effect-sparkles {
+      display: none !important;
+      animation: none !important;
+      opacity: 0 !important;
+    }
+
+    .effect-chest.no-special .effect-item {
+      box-shadow: none !important;
+      filter:
+        drop-shadow(0 0 2px var(--item-outline))
+        drop-shadow(0 0 2px var(--item-outline));
+    }
+
+    @keyframes rarityAuraPulse {
+      0%, 56% { opacity: 0; transform: translateX(-50%) scale(.25); }
+      66% { opacity: .95; transform: translateX(-50%) scale(1.05); }
+      86% { opacity: .65; transform: translateX(-50%) scale(1.18); }
+      100% { opacity: 0; transform: translateX(-50%) scale(1.32); }
+    }
+
+    @keyframes rarityRingSpin {
+      0%, 56% { opacity: 0; transform: translateX(-50%) scale(.25) rotate(0deg); }
+      66% { opacity: .95; transform: translateX(-50%) scale(1) rotate(120deg); }
+      88% { opacity: .85; transform: translateX(-50%) scale(1.06) rotate(300deg); }
+      100% { opacity: 0; transform: translateX(-50%) scale(1.18) rotate(420deg); }
+    }
+
+    @keyframes rarityRaysBurst {
+      0%, 58% { opacity: 0; transform: translateX(-50%) scale(.25) rotate(0deg); }
+      66% { opacity: .9; transform: translateX(-50%) scale(.94) rotate(10deg); }
+      86% { opacity: .72; transform: translateX(-50%) scale(1.08) rotate(34deg); }
+      100% { opacity: 0; transform: translateX(-50%) scale(1.28) rotate(54deg); }
     }
 
     .effect-beam {
@@ -760,6 +990,11 @@
     @keyframes effectRainbowMove {
       0% { background-position: 0% 50%; }
       100% { background-position: 320% 50%; }
+    }
+
+    @keyframes effectCosmicMove {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 220% 50%; }
     }
 
     @keyframes screenFlash {
@@ -1689,6 +1924,31 @@
             <div class="settings-block">
               <label>宝箱演出</label>
               <button id="chestEffectBtn" class="chest-effect-toggle" onclick="toggleChestEffect()">宝箱演出ON</button>
+              <div class="effect-test-panel" id="effectTestPanel">
+                <label>演出確認</label>
+                <div class="effect-test-grid">
+                  <select id="testChestSelect" aria-label="確認用の箱の種類">
+                    <option value="wood">木箱</option>
+                    <option value="blue">青箱</option>
+                    <option value="red">赤箱</option>
+                  </select>
+                  <select id="testItemSelect" aria-label="確認用のアイテム">
+                    <option value="common">Common</option>
+                    <option value="uncommon">Uncommon</option>
+                    <option value="rare">Rare</option>
+                    <option value="legendary">Legendary</option>
+                    <option value="immortal">Immortal</option>
+                    <option value="arcana">Arcana</option>
+                    <option value="arcana_boots">Arcana ブーツ</option>
+                    <option value="arcana_crystal">Arcana 水晶</option>
+                    <option value="beyond">Beyond</option>
+                    <option value="celestial">Celestial</option>
+                    <option value="divine">Divine</option>
+                    <option value="cosmic">Cosmic</option>
+                  </select>
+                </div>
+                <button class="effect-test-play" type="button" onclick="playSelectedDropEffect()">選択した演出を確認</button>
+              </div>
             </div>
 
             <div class="settings-block">
@@ -1768,10 +2028,13 @@
 
   <div id="screenFlash" class="screen-flash"></div>
   <div id="dropEffectLayer" class="drop-effect-layer">
-    <div id="effectChest" class="effect-chest blue">
+    <div id="effectChest" class="effect-chest wood">
       <div class="effect-aura"></div>
       <div id="effectBeam" class="effect-beam"></div>
       <div class="effect-inner-light"></div>
+      <div id="effectRarityAura" class="effect-rarity-aura common"></div>
+      <div id="effectRarityRays" class="effect-rarity-rays common"></div>
+      <div id="effectRarityRing" class="effect-rarity-ring common"></div>
       <div id="effectItem" class="effect-item white"></div>
       <div id="effectChestLid" class="effect-chest-lid"></div>
       <div id="effectChestBox" class="effect-chest-box"></div>
@@ -1812,6 +2075,8 @@
     let areaRunNotified = {};
     let chestEffectEnabled = true;
     let chestEffectTimer = null;
+    let effectTestUnlockCount = 0;
+    let effectTestUnlocked = false;
 
     const grid = document.getElementById("stageGrid");
     const cooldownInput = document.getElementById("cooldownInput");
@@ -2094,6 +2359,15 @@
       chestEffectEnabled = !chestEffectEnabled;
       const btn = document.getElementById("chestEffectBtn");
       if (btn) btn.textContent = chestEffectEnabled ? "宝箱演出ON" : "宝箱演出OFF";
+
+      if (!effectTestUnlocked) {
+        effectTestUnlockCount += 1;
+        if (effectTestUnlockCount >= 10) {
+          effectTestUnlocked = true;
+          const panel = document.getElementById("effectTestPanel");
+          if (panel) panel.classList.add("unlocked");
+        }
+      }
     }
 
     function rollEffectByTable(table) {
@@ -2106,77 +2380,82 @@
       return table[table.length - 1].color;
     }
 
-    function rollEffectItemColor(chestColor) {
+    function rollEffectChestType() {
+      return rollEffectByTable([
+        { color: "wood", rate: 50 },
+        { color: "blue", rate: 30 },
+        { color: "red", rate: 20 }
+      ]);
+    }
+
+    function rollEffectItemRarity(chestType) {
       const tables = {
-        blue: [
-          { color: "white", rate: 64 },
-          { color: "yellow", rate: 20 },
-          { color: "red", rate: 10 },
-          { color: "purple", rate: 5 },
-          { color: "rainbow", rate: 1 }
+        wood: [
+          { color: "common", rate: 50 },
+          { color: "uncommon", rate: 25 },
+          { color: "rare", rate: 15 },
+          { color: "legendary", rate: 9 },
+          { color: "immortal", rate: 1 }
         ],
-        yellow: [
-          { color: "yellow", rate: 65 },
-          { color: "red", rate: 20 },
-          { color: "purple", rate: 10 },
-          { color: "rainbow", rate: 5 }
+        blue: [
+          { color: "common", rate: 10 },
+          { color: "uncommon", rate: 20 },
+          { color: "rare", rate: 30 },
+          { color: "legendary", rate: 20 },
+          { color: "immortal", rate: 11 },
+          { color: "arcana", rate: 5 },
+          { color: "beyond", rate: 3 },
+          { color: "celestial", rate: 0.6 },
+          { color: "divine", rate: 0.3 },
+          { color: "cosmic", rate: 0.1 }
         ],
         red: [
-          { color: "red", rate: 70 },
-          { color: "purple", rate: 20 },
-          { color: "rainbow", rate: 10 }
-        ],
-        purple: [
-          { color: "purple", rate: 50 },
-          { color: "rainbow", rate: 50 }
-        ],
-        rainbow: [
-          { color: "rainbow", rate: 100 }
+          { color: "legendary", rate: 10 },
+          { color: "immortal", rate: 30 },
+          { color: "arcana", rate: 25 },
+          { color: "beyond", rate: 17 },
+          { color: "celestial", rate: 10 },
+          { color: "divine", rate: 5 },
+          { color: "cosmic", rate: 3 }
         ]
       };
-
-      const rolled = rollEffectByTable(tables[chestColor]);
-      if (rolled === "purple") {
-        const special = Math.random();
-        if (special < 0.25) return "boots";
-        if (special < 0.50) return "crystal";
-        return "purple";
-      }
-      return rolled;
+      return rollEffectByTable(tables[chestType] || tables.wood);
     }
 
-    function effectChestColorByElapsed(seconds) {
-      const r = Math.random() * 100;
-
-      // 30分未満
-      if (seconds < 30 * 60) {
-        if (r < 1) return "rainbow";
-        if (r < 11) return "purple";   // 10%
-        if (r < 26) return "red";      // 15%
-        if (r < 46) return "yellow";   // 20%
-        return "blue";                 // 54%
-      }
-
-      // 30分以上1時間未満
-      if (seconds < 60 * 60) {
-        if (r < 1) return "rainbow";
-        if (r < 16) return "purple";   // 15%
-        if (r < 46) return "red";      // 30%
-        return "yellow";               // 54%
-      }
-
-      // 1時間以上
-      if (r < 1) return "rainbow";     // 1%
-      if (r < 26) return "purple";     // 25%
-      return "red";                    // 74%
+    function effectItemClassByRarity(rarity) {
+      const classes = {
+        common: "white",
+        uncommon: "green",
+        rare: "blue",
+        legendary: "orange",
+        immortal: "red",
+        arcana: "purple",
+        beyond: "magenta",
+        celestial: "cyan",
+        divine: "yellow",
+        cosmic: "cosmic"
+      };
+      return classes[rarity] || "white";
     }
 
-    function getEffectItemCssColor(color) {
-      if (color === "white") return "#b0b0b0";
-      if (color === "yellow") return "#ffd84d";
-      if (color === "red") return "#ff3b4f";
-      if (color === "purple" || color === "boots") return "#a45cff";
-      if (color === "crystal") return "#9ff8ff";
+    function rollArcanaSpecialItem() {
+      const r = Math.random();
+      if (r < 0.20) return "boots";
+      if (r < 0.40) return "crystal";
+      return "purple";
+    }
+
+    function getEffectItemCssColor(rarity) {
+      if (rarity === "common") return "#8a8a8a";
+      if (rarity === "uncommon") return "#38d47a";
+      if (rarity === "rare") return "#1F4DB8";
+      if (rarity === "legendary") return "#ff9c40";
+      if (rarity === "immortal") return "#ff3b4f";
+      if (rarity === "arcana") return "#a45cff";
+      if (rarity === "beyond") return "#d12b86";
+      if (rarity === "celestial") return "#9ff8ff";
+      if (rarity === "divine") return "#ffd84d";
+      if (rarity === "cosmic") return "#ff6b1a";
       return "#ffffff";
     }
 
@@ -2194,27 +2473,28 @@
       if (!lid || !box) return;
 
       const colors = {
+        wood: "linear-gradient(180deg, #8a5a2b, #4b2b14)",
         blue: "linear-gradient(180deg, #3f83cf, #245690)",
-        yellow: "linear-gradient(180deg, #d0a24a, #8f6820)",
-        red: "linear-gradient(180deg, #b93542, #741722)",
-        purple: "linear-gradient(180deg, #8050b2, #472468)",
-        rainbow: "linear-gradient(90deg, #ff3b4f, #ffb13b, #fff23b, #38d47a, #2f8cff, #a45cff, #ff3b4f)"
+        red: "linear-gradient(180deg, #b93542, #741722)"
       };
 
-      lid.style.background = colors[chestColor] || colors.blue;
-      box.style.background = colors[chestColor] || colors.blue;
-      lid.style.backgroundSize = chestColor === "rainbow" ? "320% 320%" : "";
-      box.style.backgroundSize = chestColor === "rainbow" ? "320% 320%" : "";
+      lid.style.background = colors[chestColor] || colors.wood;
+      box.style.background = colors[chestColor] || colors.wood;
+      lid.style.backgroundSize = "";
+      box.style.backgroundSize = "";
     }
 
 
 
     function buildDropEffectHtml() {
       return `
-        <div id="effectChest" class="effect-chest blue">
+        <div id="effectChest" class="effect-chest wood">
           <div class="effect-aura"></div>
           <div id="effectBeam" class="effect-beam"></div>
           <div class="effect-inner-light"></div>
+          <div id="effectRarityAura" class="effect-rarity-aura common"></div>
+          <div id="effectRarityRays" class="effect-rarity-rays common"></div>
+          <div id="effectRarityRing" class="effect-rarity-ring common"></div>
           <div id="effectItem" class="effect-item white"></div>
           <div id="effectChestLid" class="effect-chest-lid"></div>
           <div id="effectChestBox" class="effect-chest-box"></div>
@@ -2227,15 +2507,14 @@
     }
 
 
-    function playDropEffect(secondsSinceStageDrop) {
+    function playDropEffectCore(chestColor, itemRarity, forcedArcanaItem) {
       if (!chestEffectEnabled) return;
 
       const layer = document.getElementById("dropEffectLayer");
       if (!layer) return;
 
-      const chestColor = effectChestColorByElapsed(secondsSinceStageDrop || 0);
-      const itemColor = rollEffectItemColor(chestColor);
-      const itemCssColor = getEffectItemCssColor(itemColor);
+      const itemColor = effectItemClassByRarity(itemRarity);
+      const itemCssColor = getEffectItemCssColor(itemRarity);
 
       clearTimeout(chestEffectTimer);
 
@@ -2247,15 +2526,32 @@
       const chest = document.getElementById("effectChest");
       const item = document.getElementById("effectItem");
       const beam = document.getElementById("effectBeam");
+      const aura = document.getElementById("effectRarityAura");
+      const ring = document.getElementById("effectRarityRing");
+      const rays = document.getElementById("effectRarityRays");
       if (!chest || !item || !beam) return;
 
-      chest.className = `effect-chest ${chestColor}`;
-      item.className = `effect-item ${itemColor}`;
+      const specialArcanaItem = itemRarity === "arcana" ? (forcedArcanaItem || rollArcanaSpecialItem()) : null;
+      const finalItemClass = specialArcanaItem || itemColor;
+      const isLuxuryArcana = specialArcanaItem === "boots" || specialArcanaItem === "crystal";
+
+      const specialEffectRarities = ["arcana", "beyond", "celestial", "divine", "cosmic"];
+      const hasSpecialEffect = specialEffectRarities.includes(itemRarity);
+
+      chest.className = `effect-chest ${chestColor}${hasSpecialEffect ? "" : " no-special"}`;
+      item.className = `effect-item ${finalItemClass}${isLuxuryArcana ? " luxury" : ""}`;
+      if (aura) aura.className = `effect-rarity-aura ${itemRarity}${isLuxuryArcana ? " luxury" : ""}`;
+      if (ring) ring.className = `effect-rarity-ring ${itemRarity}${isLuxuryArcana ? " luxury" : ""}`;
+      if (rays) rays.className = `effect-rarity-rays ${itemRarity}${isLuxuryArcana ? " luxury" : ""}`;
       chest.style.setProperty("--item-color", itemCssColor);
       beam.style.setProperty("--item-color", itemCssColor);
+      if (aura) aura.style.setProperty("--item-color", itemCssColor);
+      if (ring) ring.style.setProperty("--item-color", itemCssColor);
+      if (rays) rays.style.setProperty("--item-color", itemCssColor);
       applyEffectChestColor(chestColor);
 
-      if (chestColor === "rainbow" || itemColor === "rainbow") {
+      // フラッシュはCelestial以上だけ。SEは追加しない。
+      if (itemRarity === "cosmic" || itemRarity === "divine" || itemRarity === "celestial") {
         triggerEffectFlash();
       }
 
@@ -2273,6 +2569,30 @@
       }, 3100);
     }
 
+    function playDropEffect(secondsSinceStageDrop) {
+      const chestColor = rollEffectChestType();
+      const itemRarity = rollEffectItemRarity(chestColor);
+      playDropEffectCore(chestColor, itemRarity, null);
+    }
+
+    function playSelectedDropEffect() {
+      const chestSelect = document.getElementById("testChestSelect");
+      const itemSelect = document.getElementById("testItemSelect");
+      const chestColor = chestSelect ? chestSelect.value : "wood";
+      const selectedItem = itemSelect ? itemSelect.value : "common";
+
+      let itemRarity = selectedItem;
+      let forcedArcanaItem = null;
+      if (selectedItem === "arcana_boots") {
+        itemRarity = "arcana";
+        forcedArcanaItem = "boots";
+      } else if (selectedItem === "arcana_crystal") {
+        itemRarity = "arcana";
+        forcedArcanaItem = "crystal";
+      }
+
+      playDropEffectCore(chestColor, itemRarity, forcedArcanaItem);
+    }
 
     function markDropped(key) {
       syncCooldownInput();
