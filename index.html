@@ -768,6 +768,146 @@
       100% { opacity: 0; }
     }
 
+  
+    /* v17 折りたたみ・周回時間 */
+    .collapsible-card .collapse-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      margin-bottom: 10px;
+    }
+    .collapsible-card .collapse-header label { margin: 0; cursor: pointer; }
+    .collapse-toggle {
+      width: 34px;
+      min-height: 30px;
+      padding: 0;
+      border-radius: 8px;
+      background: #263248;
+      font-size: 16px;
+    }
+    .collapsible-card.collapsed .collapse-body { display: none; }
+    .speaker-btn { min-width: 52px; font-size: 22px; padding: 8px 10px; }
+    .stage.runnable {
+      border-color: rgba(92, 200, 255, .9);
+      background: linear-gradient(135deg, rgba(92,200,255,.22), var(--panel));
+    }
+    .run-time-label {
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 13px;
+      margin-bottom: 8px;
+      min-height: 20px;
+    }
+    .area-time-section { margin-top: 18px; }
+    .area-time-content { display: none; margin-top: 12px; }
+    .area-time-content.open { display: block; }
+    .area-time-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+    .area-time-item {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .area-time-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .area-time-item input {
+      width: 100%;
+      min-height: 42px;
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--panel2);
+      color: var(--text);
+      font-size: 16px;
+      text-align: center;
+    }
+    .hidden-file-input { display: none; }
+
+  
+    .settings-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .settings-block {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel2);
+    }
+
+  
+    .settings-stack {
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      align-items: stretch;
+    }
+
+  
+    .log-section,
+    .area-time-section {
+      width: 100%;
+    }
+
+    .section-toggle-btn {
+      width: 100%;
+      min-height: 48px;
+      background: #263248;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .section-toggle-btn .toggle-arrow {
+      min-width: 34px;
+      min-height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: #31405b;
+      font-size: 16px;
+    }
+
+    .log-csv-small {
+      width: auto !important;
+      min-height: 36px !important;
+      padding: 7px 12px !important;
+      font-size: 13px !important;
+      flex: 0 0 auto !important;
+    }
+
+  
+    .status.runnable-blink {
+      font-weight: 1000;
+      animation: runnableBlink 2.2s ease-in-out infinite;
+    }
+
+    @keyframes runnableBlink {
+      0%, 100% {
+        color: #5cc8ff;
+        text-shadow: 0 0 10px rgba(92,200,255,.8);
+      }
+      50% {
+        color: #38d47a;
+        text-shadow: 0 0 10px rgba(56,212,122,.8);
+      }
+    }
+
   </style>
 <!-- Cloudflare Web Analytics -->
 <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f48e7088e55c41f4a0a6044f8bf3531b"}'></script>
@@ -789,35 +929,51 @@
 
   <main>
     <section class="controls">
-      <div class="card">
-        <label>クールダウン時間（分） 1〜1000</label>
-        <div class="number-stepper">
-          <button class="step-btn" onclick="stepCooldown(-1)" aria-label="1分減らす">−</button>
-          <input id="cooldownInput" type="number" min="1" max="1000" step="1" value="6" inputmode="numeric" />
-          <button class="step-btn" onclick="stepCooldown(1)" aria-label="1分増やす">＋</button>
+      <div class="card collapsible-card" id="mainSettingsCard">
+        <div class="collapse-header" onclick="toggleCard('mainSettingsCard')">
+          <label>基本設定</label>
+          <button class="collapse-toggle" type="button">▼</button>
         </div>
-        <div class="preset-row" style="margin-top:10px;">
-          <button class="primary" onclick="setPreset(6)">6分</button>
-          <button class="primary" onclick="setPreset(12)">12分</button>
-        </div>
-      </div>
+        <div class="collapse-body">
+          <div class="settings-stack">
+            <div class="settings-block">
+              <label>クールダウン時間（分） 1〜1000</label>
+              <div class="number-stepper">
+                <button class="step-btn" onclick="stepCooldown(-1)" aria-label="1分減らす">−</button>
+                <input id="cooldownInput" type="number" min="1" max="1000" step="1" value="6" inputmode="numeric" />
+                <button class="step-btn" onclick="stepCooldown(1)" aria-label="1分増やす">＋</button>
+              </div>
+              <div class="preset-row" style="margin-top:10px;">
+                <button class="primary" onclick="setPreset(6)">6分</button>
+                <button class="primary" onclick="setPreset(12)">12分</button>
+              </div>
+            </div>
 
-      <div class="card">
-        <label>サウンド</label>
-        <div class="sound-row">
-          <button id="muteBtn" onclick="toggleMute()">ミュートOFF</button>
-          <button onclick="testSound()">音テスト</button>
+            <div class="settings-block">
+              <label>サウンド</label>
+              <div class="sound-row">
+                <button id="muteBtn" class="speaker-btn" onclick="toggleMute()" title="サウンドON">🔊</button>
+                <button onclick="testSound()">音テスト</button>
+              </div>
+              <label style="margin-top:12px;">音量：<span id="volumeLabel">50</span>%（0〜200%）</label>
+              <input id="volumeSlider" type="range" min="0" max="200" value="50" />
+            </div>
+
+            <div class="settings-block">
+              <label>宝箱演出</label>
+              <button id="chestEffectBtn" class="chest-effect-toggle" onclick="toggleChestEffect()">宝箱演出ON</button>
+            </div>
+
+            <div class="settings-block">
+              <label>一括操作</label>
+              <div class="preset-row">
+                <button class="danger" onclick="resetAll()">ドロップ状況リセット</button>
+                <button class="danger" onclick="clearLogs()">ログを全て削除</button>
+              </div>
+              <div class="small">ドロップ状況リセットは全ステージを未ドロップ状態に戻す。ログ削除は集計と履歴を消す。</div>
+            </div>
+          </div>
         </div>
-        <label style="margin-top:12px;">音量：<span id="volumeLabel">50</span>%（0〜200%）</label>
-        <input id="volumeSlider" type="range" min="0" max="200" value="50" />
-      </div>
-<div class="card">
-        <label>宝箱演出</label><button id="chestEffectBtn" class="chest-effect-toggle" onclick="toggleChestEffect()">宝箱演出ON</button><label>一括操作</label>
-        <div class="preset-row">
-          <button class="danger" onclick="resetAll()">ドロップ状況リセット</button>
-          <button class="danger" onclick="clearLogs()">ログを全て削除</button>
-        </div>
-        <div class="small">ドロップ状況リセットは全ステージを未ドロップ状態に戻す。ログ削除は集計と履歴を消す。</div>
       </div>
     </section>
 
@@ -825,10 +981,16 @@
 
     <section class="log-section">
       <div class="preset-row">
-        <button class="toggle-log" onclick="toggleLog()">集計・ログを展開/縮小</button>
-        <button class="toggle-log" onclick="downloadCsv()">CSVで保存</button>
+        <button class="section-toggle-btn" onclick="toggleLog()">
+          <span>集計・ログ</span>
+          <span id="logToggleArrow" class="toggle-arrow">▶</span>
+        </button>
       </div>
       <div id="logContent" class="log-content">
+        <div class="card">
+          <button class="log-csv-small" onclick="downloadCsv()">CSVで保存</button>
+        </div>
+
         <div class="card">
           <label>箱レベル別ドロップ集計</label>
           <div id="summaryGrid" class="summary-grid"></div>
@@ -854,6 +1016,26 @@
         </div>
       </div>
     </section>
+  
+    <section class="area-time-section">
+      <button class="section-toggle-btn" onclick="toggleAreaTimes()">
+        <span>各エリアの周回時間</span>
+        <span id="areaToggleArrow" class="toggle-arrow">▶</span>
+      </button>
+      <div id="areaTimeContent" class="area-time-content">
+        <div class="card">
+          <label>各エリアの周回時間（秒）</label>
+          <div class="preset-row" style="margin-bottom:12px;">
+            <button onclick="exportAreaTimesCsv()">時間出力（CSV）</button>
+            <button onclick="document.getElementById('areaTimeCsvInput').click()">時間取り込み（CSV）</button>
+            <input id="areaTimeCsvInput" class="hidden-file-input" type="file" accept=".csv,text/csv" />
+          </div>
+          <div id="areaTimeGrid" class="area-time-grid"></div>
+          <div class="small">各エリアの周回時間を入力すると最終回の表示が追加されます。</div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
 
@@ -899,6 +1081,8 @@
     let lastDropByBoxLevel = {};
     let lastDropByStage = {};
     let globalLastDropTime = null;
+    let areaRunTimes = {};
+    let areaRunNotified = {};
     let chestEffectEnabled = true;
     let chestEffectTimer = null;
 
@@ -948,6 +1132,182 @@
       syncCooldownInput();
     }
 
+
+    function toggleCard(cardId) {
+      const card = document.getElementById(cardId);
+      if (!card) return;
+      card.classList.toggle("collapsed");
+      const btn = card.querySelector(".collapse-toggle");
+      if (btn) btn.textContent = card.classList.contains("collapsed") ? "▶" : "▼";
+    }
+
+    function playRunReadySound() {
+      if (muted || volume <= 0) return;
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const gain = ctx.createGain();
+      gain.gain.value = volume * 0.22;
+      gain.connect(ctx.destination);
+      const notes = [523, 659, 784, 1046];
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        osc.type = "triangle";
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        const start = ctx.currentTime + i * 0.09;
+        osc.start(start);
+        osc.stop(start + 0.08);
+      });
+    }
+
+    function getAreaRunSeconds(key) {
+      const n = Number(areaRunTimes[key]);
+      if (!Number.isFinite(n) || n < 0) return 0;
+      return Math.trunc(n);
+    }
+
+    function clampAreaRunInput(value) {
+      let n = Number(value);
+      if (!Number.isFinite(n)) n = 0;
+      n = Math.trunc(n);
+      if (n < 0) n = 0;
+      if (n > 86400) n = 86400;
+      return n;
+    }
+
+    function renderAreaTimeInputs() {
+      const grid = document.getElementById("areaTimeGrid");
+      if (!grid) return;
+      grid.innerHTML = stages.map(item => {
+        const key = stageKey(item);
+        if (areaRunTimes[key] === undefined) areaRunTimes[key] = 0;
+        return `
+          <div class="area-time-item">
+            <div class="area-time-title">
+              <span>${item.difficulty} ${item.stage}</span>
+              <span>箱Lv ${item.boxLevel}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;">
+              <input type="number" min="0" max="86400" step="1" value="${areaRunTimes[key]}" inputmode="numeric"
+                oninput="setAreaRunTime('${key}', this.value)"
+                onchange="setAreaRunTime('${key}', this.value)" />
+              <span style="color:var(--muted);font-weight:800;">秒</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function setAreaRunTime(key, value) {
+      const fixed = clampAreaRunInput(value);
+      areaRunTimes[key] = fixed;
+      const grid = document.getElementById("areaTimeGrid");
+      if (grid) {
+        const inputs = grid.querySelectorAll("input");
+        inputs.forEach(input => {
+          const attr = input.getAttribute("oninput") || "";
+          if (attr.includes(`'${key}'`) && Number(input.value) !== fixed) input.value = fixed;
+        });
+      }
+      updateAll();
+    }
+
+    function toggleAreaTimes() {
+      const content = document.getElementById("areaTimeContent");
+      if (!content) return;
+      content.classList.toggle("open");
+      const arrow = document.getElementById("areaToggleArrow");
+      if (arrow) arrow.textContent = content.classList.contains("open") ? "▼" : "▶";
+    }
+
+    function exportAreaTimesCsv() {
+      const headers = ["difficulty", "stage", "boxLevel", "runSeconds"];
+      const rows = stages.map(item => {
+        const key = stageKey(item);
+        return [item.difficulty, item.stage, item.boxLevel, getAreaRunSeconds(key)];
+      });
+      const csv = [headers, ...rows].map(row => row.map(csvEscape).join(",")).join("\r\n");
+      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const now = new Date();
+      const stamp = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,"0")}${String(now.getDate()).padStart(2,"0")}_${String(now.getHours()).padStart(2,"0")}${String(now.getMinutes()).padStart(2,"0")}${String(now.getSeconds()).padStart(2,"0")}`;
+      a.href = url;
+      a.download = `taskbar_hero_area_times_${stamp}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function parseCsvLine(line) {
+      const result = [];
+      let current = "";
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        const next = line[i + 1];
+        if (ch === '"' && inQuotes && next === '"') {
+          current += '"';
+          i++;
+        } else if (ch === '"') {
+          inQuotes = !inQuotes;
+        } else if (ch === "," && !inQuotes) {
+          result.push(current);
+          current = "";
+        } else {
+          current += ch;
+        }
+      }
+      result.push(current);
+      return result;
+    }
+
+    function importAreaTimesCsvText(text) {
+      const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/).filter(line => line.trim() !== "");
+      if (lines.length <= 1) return;
+      const headers = parseCsvLine(lines[0]).map(h => h.trim());
+      const idxDifficulty = headers.indexOf("difficulty");
+      const idxStage = headers.indexOf("stage");
+      const idxRun = headers.indexOf("runSeconds");
+      if (idxDifficulty === -1 || idxStage === -1 || idxRun === -1) {
+        alert("CSV形式が違うよ。時間出力で保存したCSVを使ってね。");
+        return;
+      }
+      for (const line of lines.slice(1)) {
+        const cols = parseCsvLine(line);
+        const item = stages.find(s => s.difficulty === cols[idxDifficulty] && s.stage === cols[idxStage]);
+        if (!item) continue;
+        areaRunTimes[stageKey(item)] = clampAreaRunInput(cols[idxRun]);
+      }
+      renderAreaTimeInputs();
+      updateAll();
+    }
+
+    function setupAreaTimeImport() {
+      const input = document.getElementById("areaTimeCsvInput");
+      if (!input || input.dataset.ready === "1") return;
+      input.dataset.ready = "1";
+      input.addEventListener("change", () => {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          importAreaTimesCsvText(String(reader.result || ""));
+          input.value = "";
+        };
+        reader.readAsText(file, "utf-8");
+      });
+    }
+
+    function formatShortSeconds(seconds) {
+      seconds = Math.max(0, Math.ceil(seconds));
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      if (m > 0) return `${m}分${s}秒`;
+      return `${s}秒`;
+    }
+
+
     function setPreset(minutes) {
       cooldownInput.value = minutes;
       syncCooldownInput();
@@ -980,6 +1340,7 @@
             <div class="box-level">箱レベル: ${item.boxLevel}</div>
           </div>
           <div class="timer" id="timer-${key}">--:--</div>
+          <div class="run-time-label" id="runtime-${key}"></div>
           <div class="status" id="status-${key}">未ドロップ</div>
           <div class="last-stage-drop" id="lastdrop-${key}"></div>
           <div class="stage-actions">
@@ -991,6 +1352,8 @@
       });
       updateAll();
       renderLogs();
+      renderAreaTimeInputs();
+      setupAreaTimeImport();
     }
 
     function getStageByKey(key) {
@@ -1211,6 +1574,7 @@
         endTime: now + cooldownMinutes * 60 * 1000,
         notified: false,
       };
+      areaRunNotified[key] = false;
 
       playDropEffect(secondsSinceStageDrop);
       updateAll();
@@ -1224,6 +1588,7 @@
         endTime: null,
         notified: false,
       };
+      areaRunNotified[key] = false;
       delete lastDropByStage[key];
       updateAll();
     }
@@ -1240,13 +1605,15 @@
 
       // 各カードの前回ドロップ経過表示も消す
       lastDropByStage = {};
+      areaRunNotified = {};
 
       updateAll();
     }
 
     function toggleMute() {
       muted = !muted;
-      muteBtn.textContent = muted ? "ミュートON" : "ミュートOFF";
+      muteBtn.textContent = muted ? "🔇" : "🔊";
+      muteBtn.title = muted ? "ミュート中" : "サウンドON";
     }
 
     volumeSlider.addEventListener("input", () => {
@@ -1332,10 +1699,11 @@
         const card = document.getElementById(`card-${key}`);
         const timer = document.getElementById(`timer-${key}`);
         const status = document.getElementById(`status-${key}`);
+        const runtime = document.getElementById(`runtime-${key}`);
         const lastDrop = document.getElementById(`lastdrop-${key}`);
         const dropBtn = document.getElementById(`drop-${key}`);
 
-        if (!card || !timer || !status || !dropBtn || !lastDrop) continue;
+        if (!card || !timer || !status || !dropBtn || !lastDrop || !runtime) continue;
 
         const stageLastTime = lastDropByStage[key];
         if (stageLastTime && now - stageLastTime <= 600 * 60 * 1000) {
@@ -1344,7 +1712,9 @@
           lastDrop.textContent = "";
         }
 
-        card.classList.remove("ready", "waiting");
+        card.classList.remove("ready", "waiting", "runnable");
+        status.classList.remove("runnable-blink");
+        runtime.textContent = "";
         dropBtn.classList.remove("dropped");
 
         if (!state.dropped && !state.ready) {
@@ -1369,9 +1739,28 @@
               playSound();
             }
           } else {
+            const runSeconds = getAreaRunSeconds(key);
+            const runStartLeft = left - runSeconds * 1000;
             timer.textContent = formatTime(left);
-            status.textContent = "クールダウン中";
-            card.classList.add("waiting");
+            if (runSeconds > 0) {
+              if (runStartLeft <= 0) {
+                status.textContent = "周回可能";
+                status.classList.add("runnable-blink");
+                runtime.textContent = "";
+                card.classList.add("runnable");
+                if (!areaRunNotified[key]) {
+                  areaRunNotified[key] = true;
+                  playRunReadySound();
+                }
+              } else {
+                status.textContent = "クールダウン中";
+                runtime.textContent = `周回開始可能まで ${formatShortSeconds(runStartLeft / 1000)}`;
+                card.classList.add("waiting");
+              }
+            } else {
+              status.textContent = "クールダウン中";
+              card.classList.add("waiting");
+            }
             dropBtn.classList.add("dropped");
             dropBtn.textContent = "再ドロップ";
           }
@@ -1389,6 +1778,8 @@
 
     function toggleLog() {
       logContent.classList.toggle("open");
+      const arrow = document.getElementById("logToggleArrow");
+      if (arrow) arrow.textContent = logContent.classList.contains("open") ? "▼" : "▶";
     }
 
     function renderLogs() {
@@ -1434,6 +1825,7 @@
       dropLogs = [];
       lastDropByBoxLevel = {};
       lastDropByStage = {};
+      areaRunNotified = {};
       globalLastDropTime = null;
       renderLogs();
       updateAll();
